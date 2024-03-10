@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
@@ -8,6 +9,7 @@ import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
 
 @Data
+@Builder
 public class User {
     private final int id;
     @Email(message = "Email не корректный")
