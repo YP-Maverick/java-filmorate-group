@@ -1,15 +1,21 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
+import ru.yandex.practicum.filmorate.validation.IsAfter;
 
-import java.time.Duration;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Data
 public class Film {
     private final int id;
+    @NotBlank
     private final String name;
+    @Size(max=200)
     private final String description;
+    @NotNull
+    @IsAfter
     private final LocalDate releaseDate;
-    private final Duration duration;
+    @Positive
+    private final int duration;
 }
