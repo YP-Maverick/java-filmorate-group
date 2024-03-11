@@ -45,7 +45,7 @@ public class FilmControllerTest {
         final Film newFilm = filmController.create(film);
         final List<Film> films = filmController.findAll();
 
-        assertNotNull(newFilm, "Фильм не создался.");
+        assertNotNull(newFilm, "Фильм не создан.");
         assertEquals(film, newFilm, "Фильмы не соответствуют.");
         assertEquals(1, films.size(), "В списке фильмов нет созданного фильма.");
     }
@@ -61,8 +61,8 @@ public class FilmControllerTest {
         assertEquals( 1, blankViol.size());
         assertEquals( "не должно быть пустым", blankViol.iterator().next().getMessage());
 
-        Film newFilm = Film.builder().id(1)
-                .name("")
+        Film newFilm = Film.builder().id(2)
+                .name(null)
                 .description("film_descr").releaseDate(LocalDate.parse("2000-02-02")).duration(90).build();
 
         Set<ConstraintViolation<Film>> nullViol = validator.validate(newFilm);
@@ -93,7 +93,7 @@ public class FilmControllerTest {
 
         assertEquals( 0, violation.size());
 
-        final Film newFilm = Film.builder().id(1).name("film_name").description("film_descr")
+        final Film newFilm = Film.builder().id(2).name("film_name").description("film_descr")
                 .releaseDate(LocalDate.parse("1895-12-27"))
                 .duration(90).build();
 
@@ -114,7 +114,7 @@ public class FilmControllerTest {
         assertEquals( 1, violation.size());
         assertEquals( "должно быть больше 0", violation.iterator().next().getMessage());
 
-        final Film newFilm = Film.builder().id(1).name("film_name").description("film_descr").releaseDate(LocalDate.parse("2000-02-02"))
+        final Film newFilm = Film.builder().id(2).name("film_name").description("film_descr").releaseDate(LocalDate.parse("2000-02-02"))
                 .duration(-1)
                 .build();
 

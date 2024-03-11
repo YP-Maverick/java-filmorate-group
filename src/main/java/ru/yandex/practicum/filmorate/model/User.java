@@ -1,31 +1,33 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Value;
+import ru.yandex.practicum.filmorate.validation.NotContainsSpaces;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
 
-@Data
+@Value
 @Builder
 public class User {
-    private final int id;
-    @Email(message = "Email не корректный")
-    @NotBlank(message = "Email пустой")
-    private final String email;
-    @NotBlank(message = "Login пустой")
-    private final String login;
-    private String name;
+    int id;
+    @Email
+    @NotBlank
+    String email;
+    @NotBlank
+    @NotContainsSpaces
+    String login;
+    String name;
     @PastOrPresent
-    private final LocalDate birthday;
+    LocalDate birthday;
 
     public User(int id, String email, String login, String name, LocalDate birthday) {
         this.id = id;
         this.email = email;
         this.login = login;
-        if(name ==null || name.isBlank()) {
+        if(name == null || name.isBlank()) {
             this.name = login;
         } else this.name = name;
         this.birthday = birthday;
