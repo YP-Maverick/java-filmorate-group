@@ -14,7 +14,6 @@ import java.util.List;
 @RequestMapping("/films")
 @Slf4j
 public class FilmController {
-
     private final HashMap<Integer, Film> films = new HashMap<>();
     private Integer id =0;
 
