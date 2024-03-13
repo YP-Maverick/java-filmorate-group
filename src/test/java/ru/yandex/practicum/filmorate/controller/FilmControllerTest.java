@@ -50,7 +50,7 @@ public class FilmControllerTest {
 
         Set<ConstraintViolation<Film>> constraintViolations = validator.validate(film);
 
-        assertEquals( 0, constraintViolations.size());
+        assertEquals(0, constraintViolations.size());
 
         mvc.perform(post(path)
                         .content(gson.toJson(film))
@@ -75,8 +75,8 @@ public class FilmControllerTest {
 
         Set<ConstraintViolation<Film>> blankViol = validator.validate(film);
 
-        assertEquals( 1, blankViol.size());
-        assertEquals( "не должно быть пустым", blankViol.iterator().next().getMessage());
+        assertEquals(1, blankViol.size());
+        assertEquals("не должно быть пустым", blankViol.iterator().next().getMessage());
 
         mvc.perform(post(path).content(gson.toJson(film)).contentType(MediaType.APPLICATION_JSON))
                 .andExpectAll(status().isBadRequest());
@@ -89,8 +89,8 @@ public class FilmControllerTest {
                 .description("film_descr").releaseDate(LocalDate.parse("2000-02-02")).duration(90).build();
 
         Set<ConstraintViolation<Film>> nullViol = validator.validate(film);
-        assertEquals( 1, nullViol.size());
-        assertEquals( "не должно быть пустым", nullViol.iterator().next().getMessage());
+        assertEquals(1, nullViol.size());
+        assertEquals("не должно быть пустым", nullViol.iterator().next().getMessage());
 
         mvc.perform(post(path).content(gson.toJson(film)).contentType(MediaType.APPLICATION_JSON))
                 .andExpectAll(status().isBadRequest());
@@ -106,8 +106,8 @@ public class FilmControllerTest {
 
         Set<ConstraintViolation<Film>> violation = validator.validate(film);
 
-        assertEquals( 1, violation.size());
-        assertEquals( "размер должен находиться в диапазоне от 0 до 200", violation.iterator().next().getMessage());
+        assertEquals(1, violation.size());
+        assertEquals("размер должен находиться в диапазоне от 0 до 200", violation.iterator().next().getMessage());
 
         mvc.perform(post(path).content(gson.toJson(film)).contentType(MediaType.APPLICATION_JSON))
                 .andExpectAll(status().isBadRequest());
@@ -121,7 +121,7 @@ public class FilmControllerTest {
 
         Set<ConstraintViolation<Film>> violation = validator.validate(film);
 
-        assertEquals( 0, violation.size());
+        assertEquals(0, violation.size());
 
         final Film newFilm = Film.builder().id(2).name("film_name").description("film_descr")
                 .releaseDate(LocalDate.parse("1895-12-27"))
@@ -129,8 +129,8 @@ public class FilmControllerTest {
 
         Set<ConstraintViolation<Film>> afterViol = validator.validate(newFilm);
 
-        assertEquals( 1, afterViol.size());
-        assertEquals( "Дата релиза должна быть не раньше 28 декабря 1895 года.", afterViol.iterator().next().getMessage());
+        assertEquals(1, afterViol.size());
+        assertEquals("Дата релиза должна быть не раньше 28 декабря 1895 года.", afterViol.iterator().next().getMessage());
 
         mvc.perform(post(path).content(gson.toJson(newFilm)).contentType(MediaType.APPLICATION_JSON))
                 .andExpectAll(status().isBadRequest());
@@ -144,8 +144,8 @@ public class FilmControllerTest {
 
         Set<ConstraintViolation<Film>> violation = validator.validate(film);
 
-        assertEquals( 1, violation.size());
-        assertEquals( "должно быть больше 0", violation.iterator().next().getMessage());
+        assertEquals(1, violation.size());
+        assertEquals("должно быть больше 0", violation.iterator().next().getMessage());
 
         mvc.perform(post(path).content(gson.toJson(film)).contentType(MediaType.APPLICATION_JSON))
                 .andExpectAll(status().isBadRequest());
@@ -159,8 +159,8 @@ public class FilmControllerTest {
 
         Set<ConstraintViolation<Film>> negativeViol = validator.validate(film);
 
-        assertEquals( 1, negativeViol.size());
-        assertEquals( "должно быть больше 0", negativeViol.iterator().next().getMessage());
+        assertEquals(1, negativeViol.size());
+        assertEquals("должно быть больше 0", negativeViol.iterator().next().getMessage());
 
         mvc.perform(post(path).content(gson.toJson(film)).contentType(MediaType.APPLICATION_JSON))
                 .andExpectAll(status().isBadRequest());

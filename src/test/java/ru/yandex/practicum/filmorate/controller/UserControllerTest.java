@@ -49,7 +49,7 @@ public class UserControllerTest {
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
 
-        assertEquals( 0, violations.size());
+        assertEquals(0, violations.size());
 
         mvc.perform(post(path)
                 .content(gson.toJson(user))
@@ -69,8 +69,8 @@ public class UserControllerTest {
 
         Set<ConstraintViolation<User>> blankViol = validator.validate(user);
 
-        assertEquals( 1, blankViol.size());
-        assertEquals( "не должно быть пустым", blankViol.iterator().next().getMessage());
+        assertEquals(1, blankViol.size());
+        assertEquals("не должно быть пустым", blankViol.iterator().next().getMessage());
 
         mvc.perform(post(path)
                         .content(gson.toJson(user))
@@ -86,8 +86,8 @@ public class UserControllerTest {
 
         Set<ConstraintViolation<User>> emailViol = validator.validate(user);
 
-        assertEquals( 1, emailViol.size());
-        assertEquals( "должно иметь формат адреса электронной почты", emailViol.iterator().next().getMessage());
+        assertEquals(1, emailViol.size());
+        assertEquals("должно иметь формат адреса электронной почты", emailViol.iterator().next().getMessage());
 
         mvc.perform(post(path)
                         .content(gson.toJson(user))
@@ -103,8 +103,8 @@ public class UserControllerTest {
 
         Set<ConstraintViolation<User>> blankViol = validator.validate(user);
 
-        assertEquals( 1, blankViol.size());
-        assertEquals( "не должно быть пустым", blankViol.iterator().next().getMessage());
+        assertEquals(1, blankViol.size());
+        assertEquals("не должно быть пустым", blankViol.iterator().next().getMessage());
         mvc.perform(post(path)
                         .content(gson.toJson(user))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -119,8 +119,8 @@ public class UserControllerTest {
 
         Set<ConstraintViolation<User>> loginViol = validator.validate(user);
 
-        assertEquals( 1, loginViol.size());
-        assertEquals( "не должен содержать пробелы", loginViol.iterator().next().getMessage());
+        assertEquals(1, loginViol.size());
+        assertEquals("не должен содержать пробелы", loginViol.iterator().next().getMessage());
         mvc.perform(post(path)
                         .content(gson.toJson(user))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -135,7 +135,7 @@ public class UserControllerTest {
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
 
-        assertEquals( 0, violations.size());
+        assertEquals(0, violations.size());
 
         mvc.perform(post(path)
                         .content(gson.toJson(user))
@@ -154,8 +154,8 @@ public class UserControllerTest {
                 .birthday(LocalDate.of(2025, 1,1)).build();
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertEquals( 1, violations.size());
-        assertEquals( "должно содержать прошедшую дату или сегодняшнее число", violations.iterator().next().getMessage());
+        assertEquals(1, violations.size());
+        assertEquals("должно содержать прошедшую дату или сегодняшнее число", violations.iterator().next().getMessage());
 
         mvc.perform(post(path)
                         .content(gson.toJson(user))
