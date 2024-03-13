@@ -11,13 +11,13 @@ import java.time.LocalDate;
 @Builder
 public class Film {
     int id;
-    @NotBlank
+    @NotBlank(message = "Название фильма не должно быть пустым")
     String name;
-    @Size(max = 200)
+    @Size(max = 200, message = "Размер описания должен быть не больше 200 символов")
     String description;
-    @NotNull
+    @NotNull(message = "Дату релиза необходимо задать")
     @IsAfter
     LocalDate releaseDate;
-    @Positive
+    @Positive(message = "Продолжительность фильма должна быть больше 0")
     int duration;
 }

@@ -13,14 +13,14 @@ import java.time.LocalDate;
 @Builder
 public class User {
     int id;
-    @Email
-    @NotBlank
+    @Email(message = "Электронная почта должна иметь формат адреса электронной почты")
+    @NotBlank(message = "Электронная почта не должна быть пустой")
     String email;
-    @NotBlank
-    @NotContainsSpaces
+    @NotBlank(message = "Логин не должен быть пустым")
+    @NotContainsSpaces(message = "Логин не должен содержать пробелы")
     String login;
     String name;
-    @PastOrPresent
+    @PastOrPresent(message = "Дата рождения не может быть в будущем")
     LocalDate birthday;
 
     public User(int id, String email, String login, String name, LocalDate birthday) {
