@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 public class FilmController {
     private final HashMap<Integer, Film> films = new HashMap<>();
-    private Integer id =0;
+    private Integer id = 0;
 
     private Integer createId() {
         return ++id;
