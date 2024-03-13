@@ -5,7 +5,6 @@ import javax.validation.ConstraintValidatorContext;
 import java.time.LocalDate;
 
 public class IsAfterValidator implements ConstraintValidator<IsAfter, LocalDate> {
-
     private LocalDate minDate;
 
     @Override
