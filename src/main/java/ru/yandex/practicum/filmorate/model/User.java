@@ -27,7 +27,7 @@ public class User {
         this.id = id;
         this.email = email;
         this.login = login;
-        if(name == null || name.isBlank()) {
+        if (name == null || name.isBlank()) {
             this.name = login;
         } else this.name = name;
         this.birthday = birthday;
