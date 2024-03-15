@@ -29,7 +29,7 @@ public class FilmControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    private Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new DateAdapter()).create();
+    private final Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new DateAdapter()).create();
     private final String path = "/films";
     private Validator validator;
     private Film film;
@@ -99,9 +99,7 @@ public class FilmControllerTest {
     @Test
     public void validateDescriptionSizeMore200() throws Exception {
         film = Film.builder().id(1).name("film_name")
-                .description("some description more then 200, some description more then 200, some description more"
-                        + " then 200, some description more then 200, some description more then 200, some description"
-                        + " more then 200, some description more then 200")
+                .description("1".repeat(201))
                 .releaseDate(LocalDate.parse("2000-02-02")).duration(90).build();
 
         Set<ConstraintViolation<Film>> violation = validator.validate(film);
@@ -130,7 +128,7 @@ public class FilmControllerTest {
         Set<ConstraintViolation<Film>> afterViol = validator.validate(newFilm);
 
         assertEquals(1, afterViol.size());
-        assertEquals("Дата релиза должна быть не раньше 28 декабря 1895 года.", afterViol.iterator().next().getMessage());
+        assertEquals("Дата должна быть не раньше назначенной даты.", afterViol.iterator().next().getMessage());
 
         mvc.perform(post(path).content(gson.toJson(newFilm)).contentType(MediaType.APPLICATION_JSON))
                 .andExpectAll(status().isBadRequest());
