@@ -38,7 +38,7 @@ public class FilmController {
             log.error("Запрос обновить несуществующий фильм.");
             throw new ValidationException("Фильма с таким id не существует.");
         }
-        log.debug("Получен запрос обновить или создать фильм.");
+        log.debug("Получен запрос обновить фильм.");
 
         films.put(film.getId(), film);
         return films.get(film.getId());
