@@ -21,16 +21,17 @@ public class InMemoryFilmStorage implements FilmStorage{
     }
 
     @Override
-    public Film create(Film film) {
+    public Film createFilm(Film film) {
+        log.debug("Получен запрос создать новый фильм.");
+
         Film newFilm = Film.builder().id(createId()).name(film.getName()).description(film.getDescription())
                 .releaseDate(film.getReleaseDate()).duration(film.getDuration()).build();
 
-        films.put(newFilm.getId(), newFilm);
-        return films.get(newFilm.getId());
+        return films.put(newFilm.getId(), newFilm);
     }
 
     @Override
-    public void delete(int id) {
+    public void deleteFilm(int id) {
         if (!films.containsKey(id)) {
             log.error("Запрос удалить несуществующий фильм.");
             throw new ValidationException("Фильма с таким id не существует.");
@@ -41,7 +42,7 @@ public class InMemoryFilmStorage implements FilmStorage{
     }
 
     @Override
-    public Film update(Film film) {
+    public Film updateFilm(Film film) {
         if (!films.containsKey(film.getId())) {
             log.error("Запрос обновить несуществующий фильм.");
             throw new ValidationException("Фильма с таким id не существует.");
@@ -51,7 +52,8 @@ public class InMemoryFilmStorage implements FilmStorage{
         return films.put(film.getId(), film);
     }
 
-    public List<Film> findAll() {
+    @Override
+    public List<Film> findAllFilms() {
         return new ArrayList<>(films.values());
     }
 }
