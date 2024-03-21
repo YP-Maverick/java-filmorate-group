@@ -13,8 +13,13 @@ import java.util.List;
 @RequestMapping("/films")
 @Slf4j
 public class FilmController {
+
+    private final FilmStorage filmStorage;
+
     @Autowired
-    FilmStorage filmStorage;
+    public FilmController(FilmStorage filmStorage) {
+        this.filmStorage = filmStorage;
+    }
 
     @PostMapping
     public Film createFilm(@Valid @RequestBody Film film) {
