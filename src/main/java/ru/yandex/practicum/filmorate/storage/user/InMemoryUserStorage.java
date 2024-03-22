@@ -12,9 +12,9 @@ import java.util.List;
 @Repository
 @Slf4j
 public class InMemoryUserStorage implements UserStorage {
-    private final HashMap<Integer, User> users = new HashMap<>();
-    private Integer id = 0;
-    private Integer createId() {
+    private final HashMap<Long, User> users = new HashMap<>();
+    private Long id = 0L;
+    private Long createId() {
         return ++id;
     }
 
@@ -29,9 +29,9 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User update(User user) {
+    public User update(User user) throws ValidationException {
         if (!users.containsKey(user.getId())) {
-            log.error("Запрос обновить несуществющего пользователя.");
+            log.error("Запрос обновить несуществующего пользователя.");
             throw new ValidationException("Пользователя с таким id не существует.");
         }
         log.debug("Получен запрос обновить пользователя.");
@@ -40,9 +40,9 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User delete(Integer id) {
+    public User delete(Long id) throws ValidationException {
         if (!users.containsKey(id)) {
-            log.error("Запрос удалить несуществющего пользователя.");
+            log.error("Запрос удалить несуществующего пользователя.");
             throw new ValidationException("Пользователя с таким id не существует.");
         }
         log.debug("Получен запрос удалить пользователя.");
@@ -51,7 +51,23 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
+    public User getUserById(Long id) throws ValidationException {
+       if (!users.containsKey(id)) {
+           log.error("Запрос получить несуществующего пользователя.");
+           throw new ValidationException("Пользователя с таким id не существует.");
+       }
+        log.debug("Получен запрос получить пользователя по id.");
+
+        return users.get(id);
+    }
+
+    @Override
     public List<User> findAllUsers() {
         return new ArrayList<>(users.values());
+    }
+
+    @Override
+    public boolean contains(Long id) {
+        return users.containsKey(id);
     }
 }
