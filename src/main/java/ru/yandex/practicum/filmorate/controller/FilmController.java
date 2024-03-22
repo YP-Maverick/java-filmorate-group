@@ -27,7 +27,7 @@ public class FilmController {
     }
 
     @DeleteMapping
-    public void deleteFilm(int id) {
+    public void deleteFilm(Integer id) {
         filmStorage.deleteFilm(id);
     }
 

@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface FilmStorage {
     Film createFilm(Film film);
-    void deleteFilm(int id);
+    Film deleteFilm(Integer id);
     Film updateFilm(Film film);
     List<Film> findAllFilms();
 }

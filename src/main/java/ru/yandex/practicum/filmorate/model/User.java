@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Value
 @Builder
 public class User {
-    int id;
+    Integer id;
     @Email(message = "Электронная почта должна иметь формат адреса электронной почты")
     @NotBlank(message = "Электронная почта не должна быть пустой")
     String email;

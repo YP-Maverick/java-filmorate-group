@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Value
 @Builder
 public class Film {
-    int id;
+    Integer id;
     @NotBlank(message = "Название фильма не должно быть пустым")
     String name;
     @Size(max = 200, message = "Размер описания должен быть не больше 200 символов")

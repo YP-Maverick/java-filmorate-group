@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
+@Repository
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage{
     private final Map<Integer, Film> films = new HashMap<>();
@@ -31,14 +31,14 @@ public class InMemoryFilmStorage implements FilmStorage{
     }
 
     @Override
-    public void deleteFilm(int id) {
+    public Film deleteFilm(Integer id) {
         if (!films.containsKey(id)) {
             log.error("Запрос удалить несуществующий фильм.");
             throw new ValidationException("Фильма с таким id не существует.");
         }
         log.debug("Получен запрос удалить фильм.");
 
-        films.remove(id);
+        return films.remove(id);
     }
 
     @Override
