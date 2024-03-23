@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -29,10 +30,10 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User update(User user) throws ValidationException {
+    public User update(User user) throws NotFoundException {
         if (!users.containsKey(user.getId())) {
             log.error("Запрос обновить несуществующего пользователя.");
-            throw new ValidationException("Пользователя с таким id не существует.");
+            throw new NotFoundException("Пользователя с таким id не существует.");
         }
         log.debug("Получен запрос обновить пользователя.");
 
@@ -40,10 +41,10 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User delete(Long id) throws ValidationException {
+    public User delete(Long id) throws NotFoundException {
         if (!users.containsKey(id)) {
             log.error("Запрос удалить несуществующего пользователя.");
-            throw new ValidationException("Пользователя с таким id не существует.");
+            throw new NotFoundException("Пользователя с таким id не существует.");
         }
         log.debug("Получен запрос удалить пользователя.");
 
@@ -51,10 +52,10 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User getUserById(Long id) throws ValidationException {
+    public User getUserById(Long id) throws NotFoundException {
        if (!users.containsKey(id)) {
            log.error("Запрос получить несуществующего пользователя.");
-           throw new ValidationException("Пользователя с таким id не существует.");
+           throw new NotFoundException("Пользователя с таким id не существует.");
        }
         log.debug("Получен запрос получить пользователя по id.");
 
