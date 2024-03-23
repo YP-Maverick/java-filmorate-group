@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -33,6 +32,8 @@ public class UserService {
         checkId(userId);
         checkId(friendId);
 
+        log.debug("Получен запрос добавления в друзья.");
+
         Set<Long> userFriends = friends.get(userId);
         userFriends.add(friendId);
         friends.put(userId,userFriends);
@@ -45,6 +46,8 @@ public class UserService {
     public User deleteFriend(Long userId, Long friendId) throws NotFoundException {
         checkId(userId);
         checkId(friendId);
+
+        log.debug("Получен запрос удаления из друзей.");
 
         if (!friends.get(userId).remove(friendId)) {
             log.error("Запрос удаления друга, которого нет в списке друзей.");
@@ -59,6 +62,8 @@ public class UserService {
     public List<User> getAllFriends(Long id) throws NotFoundException {
         checkId(id);
 
+        log.debug("Получен запрос получения списка друзей.");
+
         List<User> userFriends = new ArrayList<>();
         for (Long friendId : friends.get(id)) {
             User friend = userStorage.getUserById(friendId);
@@ -70,6 +75,8 @@ public class UserService {
     public List<User> getCommonFriends(Long userId, Long otherId) {
         checkId(userId);
         checkId(otherId);
+
+        log.debug("Получен запрос получения списка общих друзей.");
 
         Set<Long> userFriends = friends.get(userId);
         userFriends.retainAll(friends.get(otherId));
