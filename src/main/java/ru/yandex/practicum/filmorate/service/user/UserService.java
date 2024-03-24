@@ -49,14 +49,9 @@ public class UserService {
 
         log.debug("Получен запрос удаления из друзей.");
 
-        if (!friends.get(userId).remove(friendId)) {
-            log.error("Запрос удаления друга, которого нет в списке друзей.");
-            throw new NotFoundException("Этого пользователя нет в списке друзей.");
-        } else {
-            Set<Long> friendFriends = friends.get(friendId);
-            friendFriends.remove(userId);
-            return userStorage.getUserById(friendId);
-        }
+        Set<Long> friendFriends = friends.get(friendId);
+        friendFriends.remove(userId);
+        return userStorage.getUserById(friendId);
     }
 
     public List<User> getAllFriends(Long id) throws NotFoundException {
