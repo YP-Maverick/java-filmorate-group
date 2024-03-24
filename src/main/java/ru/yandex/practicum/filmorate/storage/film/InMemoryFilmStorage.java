@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -13,10 +14,10 @@ import java.util.Map;
 @Repository
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage{
-    private final Map<Integer, Film> films = new HashMap<>();
-    private Integer id = 0;
+    private final Map<Long, Film> films = new HashMap<>();
+    private Long id = 0L;
 
-    private Integer createId() {
+    private Long createId() {
         return ++id;
     }
 
@@ -31,10 +32,10 @@ public class InMemoryFilmStorage implements FilmStorage{
     }
 
     @Override
-    public Film deleteFilm(Integer id) {
+    public Film deleteFilm(Long id) {
         if (!films.containsKey(id)) {
             log.error("Запрос удалить несуществующий фильм.");
-            throw new ValidationException("Фильма с таким id не существует.");
+            throw new NotFoundException("Фильма с таким id не существует.");
         }
         log.debug("Получен запрос удалить фильм.");
 
@@ -53,7 +54,23 @@ public class InMemoryFilmStorage implements FilmStorage{
     }
 
     @Override
+    public Film getFilmById(Long id) {
+        if (!films.containsKey(id)) {
+            log.error("Запрос получить несуществующий фильм.");
+            throw new NotFoundException("Фильма с таким id не существует.");
+        }
+        log.debug("Получен запрос получить фильм.");
+
+        return films.get(id);
+    }
+
+    @Override
     public List<Film> findAllFilms() {
         return new ArrayList<>(films.values());
+    }
+
+    @Override
+    public boolean contains(Long id) {
+        return films.containsKey(id);
     }
 }
