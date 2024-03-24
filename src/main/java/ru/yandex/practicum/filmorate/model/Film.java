@@ -23,5 +23,5 @@ public class Film {
     int duration;
     @With
     @PositiveOrZero
-    Long likes;
+    Integer likes;
 }

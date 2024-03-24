@@ -26,9 +26,9 @@ public class InMemoryFilmStorage implements FilmStorage{
         log.debug("Получен запрос создать новый фильм.");
 
         Film newFilm = Film.builder().id(createId()).name(film.getName()).description(film.getDescription())
-                .releaseDate(film.getReleaseDate()).duration(film.getDuration()).build();
-
-        return films.put(newFilm.getId(), newFilm);
+                .releaseDate(film.getReleaseDate()).duration(film.getDuration()).likes(0).build();
+        films.put(newFilm.getId(), newFilm);
+        return newFilm;
     }
 
     @Override
@@ -50,7 +50,8 @@ public class InMemoryFilmStorage implements FilmStorage{
         }
         log.debug("Получен запрос обновить фильм.");
 
-        return films.put(film.getId(), film);
+        films.put(film.getId(), film);
+        return film;
     }
 
     @Override

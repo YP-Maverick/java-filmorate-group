@@ -6,10 +6,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.controller.adapter.DateAdapter;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.user.UserService;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -26,6 +28,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserControllerTest {
     @Autowired
     private MockMvc mvc;
+
+    @MockBean
+    UserService userService;
+
     private Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new DateAdapter()).create();
     private final String path = "/users";
     private Validator validator;
@@ -40,7 +46,7 @@ public class UserControllerTest {
     @Test
     public void createUser() throws Exception {
         user = User.builder()
-                .id(1)
+                .id(1L)
                 .email("user@ya.ru")
                 .login("login")
                 .name("name")
@@ -63,7 +69,7 @@ public class UserControllerTest {
 
     @Test
     public void validateEmptyEmail() throws Exception {
-        user = User.builder().id(1)
+        user = User.builder().id(1L)
                 .email("")
                 .login("login").name("name").birthday(LocalDate.of(2000, 1,1)).build();
 
@@ -80,7 +86,7 @@ public class UserControllerTest {
 
     @Test
     public void validateWrongEmail() throws Exception {
-        user = User.builder().id(1)
+        user = User.builder().id(1L)
                 .email("123")
                 .login("login").name("name").birthday(LocalDate.of(2000, 1,1)).build();
 
@@ -97,7 +103,7 @@ public class UserControllerTest {
 
     @Test
     public void validateNullLogin() throws Exception {
-        user = User.builder().id(1).email("user@ya.ru")
+        user = User.builder().id(1L).email("user@ya.ru")
                 .login(null)
                 .name("name").birthday(LocalDate.of(2000, 1,1)).build();
 
@@ -113,7 +119,7 @@ public class UserControllerTest {
 
     @Test
     public void validateWithSpaceLogin() throws Exception {
-        user = User.builder().id(1).email("user@ya.ru")
+        user = User.builder().id(1L).email("user@ya.ru")
                 .login("1 2 3 ")
                 .name("name").birthday(LocalDate.of(2000, 1,1)).build();
 
@@ -129,7 +135,7 @@ public class UserControllerTest {
 
     @Test
     public void validateBlankName() throws Exception {
-        user = User.builder().id(1).email("user@ya.ru").login("login")
+        user = User.builder().id(1L).email("user@ya.ru").login("login")
                 .name("")
                 .birthday(LocalDate.of(2000, 1,1)).build();
 
@@ -149,7 +155,7 @@ public class UserControllerTest {
 
     @Test
     public void validateBirthday() throws Exception {
-        user = User.builder().id(1).email("user@ya.ru").login("login")
+        user = User.builder().id(1L).email("user@ya.ru").login("login")
                 .name("")
                 .birthday(LocalDate.of(2025, 1,1)).build();
 

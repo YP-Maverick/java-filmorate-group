@@ -24,8 +24,8 @@ public class InMemoryUserStorage implements UserStorage {
 
         User newUser = User.builder().id(createId()).email(user.getEmail()).login(user.getLogin())
                 .name(user.getName()).birthday(user.getBirthday()).build();
-
-        return users.put(newUser.getId(), newUser);
+        users.put(newUser.getId(), newUser);
+        return newUser;
     }
 
     @Override
@@ -36,7 +36,8 @@ public class InMemoryUserStorage implements UserStorage {
         }
         log.debug("Получен запрос обновить пользователя.");
 
-        return users.put(user.getId(), user);
+        users.put(user.getId(), user);
+        return user;
     }
 
     @Override

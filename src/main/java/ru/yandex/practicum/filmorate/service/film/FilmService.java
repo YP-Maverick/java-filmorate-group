@@ -18,7 +18,8 @@ public class FilmService {
     FilmStorage filmStorage;
     UserStorage userStorage;
     private final Map<Long, Set<Long>> likes = new HashMap<>();
-    TreeSet<Film> filmRating = new TreeSet<>(Comparator.comparing(Film::getLikes).thenComparing(Film::getId));
+    TreeSet<Film> filmRating = new TreeSet<>(Comparator.comparing(Film::getLikes)
+            .thenComparing(Film::getId).reversed());
 
     @Autowired
     public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
@@ -51,6 +52,7 @@ public class FilmService {
             Film film = filmStorage.getFilmById(filmId);
             Film newFilm = film.withLikes(film.getLikes() + 1);
             filmStorage.updateFilm(newFilm);
+            filmRating.remove(film);
             filmRating.add(newFilm);
             likes.put(filmId, users);
         } else {
@@ -92,7 +94,8 @@ public class FilmService {
 
     public Film createFilm(Film film) {
         Film newFilm = filmStorage.createFilm(film);
-        likes.put(film.getId(), new HashSet<>());
+        likes.put(newFilm.getId(), new HashSet<>());
+        filmRating.add(newFilm);
         return newFilm;
     }
 
