@@ -46,7 +46,7 @@ public class InMemoryFilmStorage implements FilmStorage{
     public Film updateFilm(Film film) {
         if (!films.containsKey(film.getId())) {
             log.error("Запрос обновить несуществующий фильм.");
-            throw new ValidationException("Фильма с таким id не существует.");
+            throw new NotFoundException("Фильма с таким id не существует.");
         }
         log.debug("Получен запрос обновить фильм.");
 
