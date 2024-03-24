@@ -12,8 +12,7 @@ import java.util.*;
 @Service
 @Slf4j
 public class UserService {
-
-    UserStorage userStorage;
+    private final UserStorage userStorage;
     private final Map<Long, Set<Long>> friends = new HashMap<>();
 
     @Autowired
@@ -36,11 +35,9 @@ public class UserService {
 
         Set<Long> userFriends = friends.get(userId);
         userFriends.add(friendId);
-        friends.put(userId,userFriends);
 
         Set<Long> friendFriends = friends.get(friendId);
         friendFriends.add(userId);
-        friends.put(friendId, friendFriends);
     }
 
     public User deleteFriend(Long userId, Long friendId) throws NotFoundException {
@@ -49,8 +46,12 @@ public class UserService {
 
         log.debug("Получен запрос удаления из друзей.");
 
+        Set<Long> userFriends = friends.get(userId);
+        userFriends.remove(friendId);
+
         Set<Long> friendFriends = friends.get(friendId);
         friendFriends.remove(userId);
+
         return userStorage.getUserById(friendId);
     }
 
@@ -73,7 +74,7 @@ public class UserService {
 
         log.debug("Получен запрос получения списка общих друзей.");
 
-        Set<Long> userFriends = friends.get(userId);
+        Set<Long> userFriends = new HashSet<>(friends.get(userId));
         userFriends.retainAll(friends.get(otherId));
         List<User> commonFriends = new ArrayList<>();
         for (Long id : userFriends) {

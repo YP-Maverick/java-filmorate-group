@@ -15,10 +15,10 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class FilmService {
-    FilmStorage filmStorage;
-    UserStorage userStorage;
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
     private final Map<Long, Set<Long>> likes = new HashMap<>();
-    TreeSet<Film> filmRating = new TreeSet<>(Comparator.comparing(Film::getLikes)
+    private final TreeSet<Film> filmRating = new TreeSet<>(Comparator.comparing(Film::getLikes)
             .thenComparing(Film::getId).reversed());
 
     @Autowired
@@ -100,7 +100,10 @@ public class FilmService {
     }
 
     public Film deleteFilm(Long id) {
-        return filmStorage.deleteFilm(id);
+        likes.remove(id);
+        Film delFilm = filmStorage.deleteFilm(id);
+        filmRating.remove(delFilm);
+        return delFilm;
     }
 
     public Film updateFilm(Film film) {
