@@ -42,7 +42,7 @@ public class FilmService {
         }
     }
 
-    public void addLike(Long filmId, Long userId) throws ValidationException {
+    public void addLike(Long filmId, Long userId) {
         checkFilmId(filmId);
         checkUserId(userId);
         log.debug("Получен запрос добавить лайк.");

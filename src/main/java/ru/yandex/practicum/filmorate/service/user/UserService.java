@@ -27,7 +27,7 @@ public class UserService {
         }
     }
 
-    public void addFriend(Long userId, Long friendId) throws NotFoundException {
+    public void addFriend(Long userId, Long friendId) {
         checkId(userId);
         checkId(friendId);
 
@@ -40,7 +40,7 @@ public class UserService {
         friendFriends.add(userId);
     }
 
-    public User deleteFriend(Long userId, Long friendId) throws NotFoundException {
+    public User deleteFriend(Long userId, Long friendId) {
         checkId(userId);
         checkId(friendId);
 
@@ -55,7 +55,7 @@ public class UserService {
         return userStorage.getUserById(friendId);
     }
 
-    public List<User> getAllFriends(Long id) throws NotFoundException {
+    public List<User> getAllFriends(Long id) {
         checkId(id);
 
         log.debug("Получен запрос получения списка друзей.");
@@ -89,11 +89,11 @@ public class UserService {
         return newUser;
     }
 
-    public User updateUser(User user) throws NotFoundException {
+    public User updateUser(User user) {
         return userStorage.update(user);
     }
 
-    public User deleteUser(Long id) throws NotFoundException {
+    public User deleteUser(Long id) {
         User delUser = userStorage.delete(id);
         for (Long friendId : friends.get(id)) {
             friends.get(friendId).remove(id);
@@ -101,7 +101,7 @@ public class UserService {
         return delUser;
     }
 
-    public User getUserById(Long id) throws NotFoundException {
+    public User getUserById(Long id) {
         return userStorage.getUserById(id);
     }
 
