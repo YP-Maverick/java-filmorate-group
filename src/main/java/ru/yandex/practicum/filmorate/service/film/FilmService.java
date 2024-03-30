@@ -82,7 +82,7 @@ public class FilmService {
 
     public List<Film> getTopFilms(Integer count) {
         log.debug("Получен запрос вывести список популярных фильмов");
-        
+
         long size = (count == null || count <= 0) ? 10L : count;
         return filmRating.stream().limit(size).collect(Collectors.toList());
     }
