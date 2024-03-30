@@ -33,11 +33,13 @@ public class UserService {
 
         log.debug("Получен запрос добавления в друзья.");
 
+        addToFriends(userId, friendId);
+        addToFriends(friendId, userId);
+    }
+
+    private void addToFriends(Long userId, Long friendId) {
         Set<Long> userFriends = friends.get(userId);
         userFriends.add(friendId);
-
-        Set<Long> friendFriends = friends.get(friendId);
-        friendFriends.add(userId);
     }
 
     public User deleteFriend(Long userId, Long friendId) {
@@ -46,13 +48,14 @@ public class UserService {
 
         log.debug("Получен запрос удаления из друзей.");
 
-        Set<Long> userFriends = friends.get(userId);
-        userFriends.remove(friendId);
-
-        Set<Long> friendFriends = friends.get(friendId);
-        friendFriends.remove(userId);
-
+        removeFromFriends(userId, friendId);
+        removeFromFriends(friendId, userId);
         return userStorage.getUserById(friendId);
+    }
+
+    private void removeFromFriends(Long userId, Long delUserId) {
+        Set<Long> userFriends = friends.get(userId);
+        userFriends.remove(delUserId);
     }
 
     public List<User> getAllFriends(Long id) {
