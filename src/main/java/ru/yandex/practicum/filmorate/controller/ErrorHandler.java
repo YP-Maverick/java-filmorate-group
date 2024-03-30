@@ -32,11 +32,4 @@ public class ErrorHandler {
         return Map.of("error", "Object is not found",
                 "errorMessage", e.getMessage());
     }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Map<String, String> handleServerError(final Exception e) {
-        log(e);
-        return Map.of("error", "Internal Server Error");
-    }
 }
