@@ -17,7 +17,7 @@ public class ErrorHandler {
         log.error("Исключение {}: {}", e, e.getMessage());
     }
 
-    @ExceptionHandler
+    @ExceptionHandler({ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidation(final ValidationException e) {
         log(e);
@@ -25,7 +25,7 @@ public class ErrorHandler {
                 "errorMessage", e.getMessage());
     }
 
-    @ExceptionHandler
+    @ExceptionHandler({NotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFound(final NotFoundException e) {
         log(e);
