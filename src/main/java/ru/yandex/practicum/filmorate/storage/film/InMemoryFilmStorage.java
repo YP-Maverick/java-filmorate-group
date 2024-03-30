@@ -24,8 +24,16 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film createFilm(Film film) {
         log.debug("Получен запрос создать новый фильм.");
 
-        Film newFilm = Film.builder().id(createId()).name(film.getName()).description(film.getDescription())
-                .releaseDate(film.getReleaseDate()).duration(film.getDuration()).likes(0).build();
+        Film newFilm = Film.builder()
+                .id(createId())
+                .name(film.getName())
+                .description(film.getDescription())
+                .releaseDate(film.getReleaseDate())
+                .duration(film.getDuration())
+                .likes(0)
+                .build();
+        /*Film f = film.withId(createId())
+                .withLikes(0);*/
         films.put(newFilm.getId(), newFilm);
         return newFilm;
     }
