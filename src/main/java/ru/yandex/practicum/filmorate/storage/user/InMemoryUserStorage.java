@@ -23,8 +23,7 @@ public class InMemoryUserStorage implements UserStorage {
     public User create(User user) {
         log.debug("Получен запрос создать нового пользователя.");
 
-        User newUser = User.builder().id(createId()).email(user.getEmail()).login(user.getLogin())
-                .name(user.getName()).birthday(user.getBirthday()).build();
+        User newUser = user.withId(createId());
         users.put(newUser.getId(), newUser);
         return newUser;
     }

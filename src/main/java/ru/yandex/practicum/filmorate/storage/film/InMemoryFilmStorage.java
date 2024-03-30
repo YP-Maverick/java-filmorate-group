@@ -24,10 +24,10 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film createFilm(Film film) {
         log.debug("Получен запрос создать новый фильм.");
 
-        Film f = film.withId(createId())
+        Film newFilm = film.withId(createId())
                 .withLikes(0);
-        films.put(f.getId(), f);
-        return f;
+        films.put(newFilm.getId(), newFilm);
+        return newFilm;
     }
 
     @Override
