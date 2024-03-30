@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Value
 @Builder
 public class Film {
-    //@With
+    @With
     Long id;
     @NotBlank(message = "Название фильма не должно быть пустым")
     String name;
