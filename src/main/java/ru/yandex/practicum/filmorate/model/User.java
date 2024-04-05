@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Builder;
 import lombok.Value;
+import lombok.With;
 import ru.yandex.practicum.filmorate.validation.NotContainsSpaces;
 
 import javax.validation.constraints.Email;
@@ -12,7 +13,8 @@ import java.time.LocalDate;
 @Value
 @Builder
 public class User {
-    int id;
+    @With
+    Long id;
     @Email(message = "Электронная почта должна иметь формат адреса электронной почты")
     @NotBlank(message = "Электронная почта не должна быть пустой")
     String email;
@@ -23,7 +25,7 @@ public class User {
     @PastOrPresent(message = "Дата рождения не может быть в будущем")
     LocalDate birthday;
 
-    public User(int id, String email, String login, String name, LocalDate birthday) {
+    public User(long id, String email, String login, String name, LocalDate birthday) {
         this.id = id;
         this.email = email;
         this.login = login;

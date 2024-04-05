@@ -1,51 +1,57 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.film.FilmService;
+
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @RestController
 @RequestMapping("/films")
-@Slf4j
+@RequiredArgsConstructor
 public class FilmController {
-    private final HashMap<Integer, Film> films = new HashMap<>();
-    private Integer id = 0;
-
-    private Integer createId() {
-        return ++id;
-    }
+    private final FilmService filmService;
 
     @PostMapping
-    public Film create(@Valid @RequestBody Film film) {
-        log.debug("Получен запрос создать новый фильм.");
+    public Film createFilm(@Valid @RequestBody Film film) {
+        return filmService.createFilm(film);
+    }
 
-        Film newFilm = Film.builder().id(createId()).name(film.getName()).description(film.getDescription())
-                .releaseDate(film.getReleaseDate()).duration(film.getDuration()).build();
-
-        films.put(newFilm.getId(), newFilm);
-        return films.get(newFilm.getId());
+    @DeleteMapping("/{id}")
+    public Film deleteFilm(@PathVariable Long id) {
+        return filmService.deleteFilm(id);
     }
 
     @PutMapping
-    public Film update(@Valid @RequestBody Film film) {
-        if (!films.containsKey(film.getId())) {
-            log.error("Запрос обновить несуществующий фильм.");
-            throw new ValidationException("Фильма с таким id не существует.");
-        }
-        log.debug("Получен запрос обновить или создать фильм.");
-
-        films.put(film.getId(), film);
-        return films.get(film.getId());
+    public Film updateFilm(@Valid @RequestBody Film film) {
+        return filmService.updateFilm(film);
     }
 
     @GetMapping
-    public List<Film> findAll() {
-        return new ArrayList<>(films.values());
+    public List<Film> findAllFilms() {
+        return filmService.findAllFilms();
+    }
+
+    @GetMapping("/{id}")
+    public Film getFilmById(@PathVariable Long id) {
+        return filmService.getFilmById(id);
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    public void addLike(@PathVariable Long id, @PathVariable Long userId) {
+        filmService.addLike(id, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public void deleteLike(@PathVariable Long id, @PathVariable Long userId) {
+        filmService.deleteLike(id, userId);
+    }
+
+    @GetMapping("/popular")
+    public List<Film> getTopFilms(@RequestParam Integer count) {
+        return filmService.getTopFilms(count);
     }
 }
