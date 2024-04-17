@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.validation.IsAfter;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Value
 @Builder
@@ -25,4 +26,6 @@ public class Film {
     @With
     @PositiveOrZero
     Integer likes;
+    List<Integer> genres_id;
+    int ratingMPA_id;
 }
