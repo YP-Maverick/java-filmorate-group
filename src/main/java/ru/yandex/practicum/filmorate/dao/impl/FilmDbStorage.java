@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.dao.GenreStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
@@ -19,8 +20,8 @@ import java.util.List;
 @Slf4j
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
+    private final GenreStorage genreStorage;
 
-    //TODO: доработать добавление жанров
     private Film makeFilm(ResultSet rs, int rowNum) throws SQLException {
         return Film.builder()
                 .id(rs.getLong("id"))
@@ -29,6 +30,7 @@ public class FilmDbStorage implements FilmStorage {
                 .releaseDate(rs.getDate("releaseDate").toLocalDate())
                 .duration(rs.getInt("duration"))
                 .likes(rs.getInt("likes"))
+                .genres_id(genreStorage.getFilmGenres(rs.getLong("id")))
                 .ratingMPA_id(rs.getInt("rating_id"))
                 .build();
     }

@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.dao.mapper.Mapper;
+import ru.yandex.practicum.filmorate.dao.mapper.ModelMapper;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -19,7 +19,7 @@ import java.util.List;
 @Slf4j
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
-    private final Mapper mapper;
+    private final ModelMapper mapper;
 
     @Override
     public User create(User user) {

@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.GenreStorage;
-import ru.yandex.practicum.filmorate.dao.mapper.Mapper;
+import ru.yandex.practicum.filmorate.dao.mapper.ModelMapper;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 
@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 public class GenreDbStorage implements GenreStorage {
     private final JdbcTemplate jdbcTemplate;
-    private final Mapper mapper;
+    private final ModelMapper mapper;
 
     @Override
     public Genre getGenreById(int id) {
@@ -37,9 +37,8 @@ public class GenreDbStorage implements GenreStorage {
     }
 
     @Override
-    public List<Genre> getFilmGenres(Long filmId) {
-        String sql = "SELECT * FROM genres WHERE id IN "
-                + "(SELECT fg.genre_id FROM film_genres fg WHERE fg.film_id = ?)";
-        return jdbcTemplate.query(sql, mapper::makeGenre, filmId);
+    public List<Integer> getFilmGenres(Long filmId) {
+        String sql = "SELECT genre_id FROM film_genres WHERE film_id = ?";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt("genre_id"), filmId);
     }
 }

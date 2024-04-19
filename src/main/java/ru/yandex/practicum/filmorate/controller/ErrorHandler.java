@@ -13,7 +13,8 @@ import java.util.Map;
 @Slf4j
 @RestControllerAdvice(assignableTypes = {FilmController.class,
         UserController.class,
-        GenreController.class})
+        GenreController.class,
+        RatingMpaController.class})
 public class ErrorHandler {
     private void log(Throwable e) {
         log.error("Исключение {}: {}", e, e.getMessage());

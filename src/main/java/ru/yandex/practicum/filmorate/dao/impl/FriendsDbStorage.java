@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.FriendsStorage;
-import ru.yandex.practicum.filmorate.dao.mapper.Mapper;
+import ru.yandex.practicum.filmorate.dao.mapper.ModelMapper;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 public class FriendsDbStorage implements FriendsStorage {
     private final JdbcTemplate jdbcTemplate;
-    private final Mapper mapper;
+    private final ModelMapper mapper;
 
     private void checkId (Long userId) {
         String sqlCheckId = "SELECT COUNT(*) FROM users WHERE id = ?";
