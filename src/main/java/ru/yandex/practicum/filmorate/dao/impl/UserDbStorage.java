@@ -61,10 +61,7 @@ public class UserDbStorage implements UserStorage {
 
         User user = getUserById(id);
         String sql = "DELETE FROM users WHERE id = ?";
-
-        //TODO: перед сдачей проекта удалить это логирование
-        int rowCount = jdbcTemplate.update(sql, id);
-        log.debug("Удалено строк: {}", rowCount);
+        jdbcTemplate.update(sql, id);
 
         return user;
     }

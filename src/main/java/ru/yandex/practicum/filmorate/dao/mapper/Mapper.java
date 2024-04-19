@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.dao.mapper;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.ResultSet;
@@ -28,6 +29,13 @@ public class Mapper {
                 .duration(rs.getInt("duration"))
                 .likes(rs.getInt("likes"))
                 .ratingMPA_id(rs.getInt("rating_id"))
+                .build();
+    }
+
+    public Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
+        return Genre.builder()
+                .id(rs.getInt("id"))
+                .name(rs.getString("name"))
                 .build();
     }
 }
