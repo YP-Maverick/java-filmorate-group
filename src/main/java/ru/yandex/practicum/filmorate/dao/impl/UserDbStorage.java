@@ -48,7 +48,7 @@ public class UserDbStorage implements UserStorage {
             log.error("Запрос обновить несуществующего пользователя с id {}.", user.getId());
             throw new NotFoundException(String.format("Пользователя с id %d не существует.", user.getId()));
         }
-        log.debug("Получен запрос обновить пользователя.");
+        log.debug("Получен запрос обновить пользователя с id {}.", user.getId());
         String sql = "UPDATE users SET email = ?, login = ?,"
                 + " name = ?, birthday = ? WHERE id = ?";
 

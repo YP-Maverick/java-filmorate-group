@@ -10,9 +10,10 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- Создание таблицы friends
 CREATE TABLE IF NOT EXISTS friends (
-	user_id INTEGER PRIMARY KEY REFERENCES users (id),
+	user_id INTEGER REFERENCES users (id),
 	friend_id INTEGER REFERENCES users (id),
-	status boolean NOT NULL
+	status boolean NOT NULL,
+	CONSTRAINT pk_friends PRIMARY KEY(user_id, friend_id)
 );
 
 -- Создание таблицы rating_MPA
@@ -37,8 +38,10 @@ CREATE TABLE IF NOT EXISTS films (
 
 -- Создание таблицы film_likes
 CREATE TABLE IF NOT EXISTS film_likes (
-	film_id INTEGER PRIMARY KEY REFERENCES films (id),
-	user_id INTEGER REFERENCES users (id)
+	film_id INTEGER REFERENCES films (id),
+	user_id INTEGER REFERENCES users (id),
+	CONSTRAINT pk_film_likes PRIMARY KEY(film_id, user_id)
+
 );
 
 --Создание таблицы genres
@@ -50,6 +53,7 @@ CREATE TABLE IF NOT EXISTS genres (
 
 -- Создание таблицы film_genres
 CREATE TABLE IF NOT EXISTS film_genres (
-	film_id INTEGER PRIMARY KEY REFERENCES films (id),
-	genre_id INTEGER REFERENCES genres (id)
+	film_id INTEGER REFERENCES films (id),
+	genre_id INTEGER REFERENCES genres (id),
+	CONSTRAINT pk_film_genres PRIMARY KEY(film_id, genre_id)
 );
