@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS friends (
 	user_id INTEGER REFERENCES users (id),
 	friend_id INTEGER REFERENCES users (id),
-	status boolean NOT NULL,
+	status boolean NOT NULL DEFAULT true,
 	CONSTRAINT pk_friends PRIMARY KEY(user_id, friend_id)
 );
 

@@ -6,12 +6,11 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.dao.mapper.Mapper;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 @AllArgsConstructor
@@ -20,16 +19,7 @@ import java.util.List;
 @Slf4j
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
-
-    private User makeUser(ResultSet rs, int rowNum) throws SQLException {
-        return User.builder()
-                .id(rs.getLong("id"))
-                .email(rs.getString("email"))
-                .login(rs.getString("login"))
-                .name(rs.getString("name"))
-                .birthday(rs.getDate("birthday").toLocalDate())
-                .build();
-    }
+    private final Mapper mapper;
 
     @Override
     public User create(User user) {
@@ -88,13 +78,13 @@ public class UserDbStorage implements UserStorage {
         log.debug("Получен запрос получить пользователя с id {}.", id);
 
         String sql = "SELECT * FROM users WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, this::makeUser, id);
+        return jdbcTemplate.queryForObject(sql, mapper::makeUser, id);
     }
 
     @Override
     public List<User> findAllUsers() {
         String sql = "SELECT * FROM users";
-        return jdbcTemplate.query(sql, this::makeUser);
+        return jdbcTemplate.query(sql, mapper::makeUser);
     }
 
     @Override
