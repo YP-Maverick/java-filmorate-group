@@ -3,10 +3,13 @@ package ru.yandex.practicum.filmorate.dao.impl;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.GenreStorage;
 import ru.yandex.practicum.filmorate.dao.mapper.ModelMapper;
+import ru.yandex.practicum.filmorate.exception.GenreException;
+import ru.yandex.practicum.filmorate.exception.LikeException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 
@@ -41,26 +44,34 @@ public class GenreDbStorage implements GenreStorage {
     }
 
     @Override
-    public List<Integer> getFilmGenres(Long filmId) {
+    public List<Genre> getFilmGenres(Long filmId) {
         log.debug("Запрос получить список жанров фильма с id {}", filmId);
 
-        String sql = "SELECT genre_id FROM film_genres WHERE film_id = ?";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt("genre_id"), filmId);
+        String sql1 = "SELECT genre_id FROM film_genres WHERE film_id = ?";
+        String sql = "SELECT * FROM genres WHERE id IN "
+                + "(SELECT genre_id FROM film_genres WHERE film_id = ?)";
+        return jdbcTemplate.query(sql, mapper::makeGenre, filmId);
     }
 
     @Override
-    public void addFilmGenres(Long filmId, List<Integer> genresId) {
+    public void addFilmGenres(Long filmId, List<Genre> genres) {
         log.debug("Запрос добавить жанры фильма с id {}", filmId);
 
         String sql = "INSERT INTO film_genres (film_id, genre_id)"
                 + "VALUES (?, ?)";
-        for (Integer genreId : genresId) {
-            jdbcTemplate.update (sql, filmId, genreId);
+        for (Genre genre : genres) {
+            try {
+                jdbcTemplate.update (sql, filmId, genre.getId());
+            } catch (DataIntegrityViolationException e) {
+                log.error("Запрос добавить фильм с id {} с несуществующим жанром с id {}.",
+                        filmId, genre.getId());
+                throw new GenreException(String.format("Жанра с id {} не существует.", genre.getId()));
+            }
         }
     }
 
     @Override
-    public void updateFilmGenres(Long filmId, List<Integer> genresId) {
+    public void updateFilmGenres(Long filmId, List<Genre> genres) {
         log.debug("Запрос обновить список жанров фильма с id {}", filmId);
 
         // Удаление прежнего списка жанров
@@ -68,6 +79,6 @@ public class GenreDbStorage implements GenreStorage {
         jdbcTemplate.update(delSql, filmId);
 
         // Добавление нового списка жанров
-        addFilmGenres(filmId, genresId);
+        addFilmGenres(filmId, genres);
     }
 }

@@ -27,20 +27,20 @@ public class Film {
     @PositiveOrZero
     Long likes;
     @With
-    List<Integer> genresId;
-    int ratingMPA_id;
+    List<Genre> genres;
+    RatingMpa mpa;
 
 
     public Film(Long id, String name, String description, LocalDate releaseDate, int duration,
-                Long likes, List<Integer> genresId, int ratingMPA_id) {
+                Long likes, List<Genre> genres, RatingMpa mpa) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
         this.likes = likes;
-        this.genresId = (genresId == null) ? new ArrayList<>() : genresId;
-        this.ratingMPA_id = ratingMPA_id;
+        this.genres = (genres == null) ? new ArrayList<>() : genres;
+        this.mpa = mpa;
     }
 
     public Map<String, Object> toMap() {
@@ -49,7 +49,7 @@ public class Film {
         values.put("description", description);
         values.put("release_Date", releaseDate);
         values.put("duration", duration);
-        values.put("ratingMPA_id", ratingMPA_id);
+        values.put("rating_id", mpa.getId());
         return values;
     }
 }

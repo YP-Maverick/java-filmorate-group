@@ -8,17 +8,17 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.GenreStorage;
+import ru.yandex.practicum.filmorate.dao.RatingMpaStorage;
 import ru.yandex.practicum.filmorate.exception.LikeException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @AllArgsConstructor
 @Repository
@@ -27,6 +27,7 @@ import java.util.Map;
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final GenreStorage genreStorage;
+    private final RatingMpaStorage ratingMpaStorage;
     private final UserStorage userStorage;
 
     // Не в ModelMapper.java, чтобы избежать зацикливания с GenreStorage
@@ -38,8 +39,8 @@ public class FilmDbStorage implements FilmStorage {
                 .releaseDate(rs.getDate("release_Date").toLocalDate())
                 .duration(rs.getInt("duration"))
                 .likes(rs.getLong("likes"))
-                .genresId(genreStorage.getFilmGenres(rs.getLong("id")))
-                .ratingMPA_id(rs.getInt("rating_id"))
+                .genres(genreStorage.getFilmGenres(rs.getLong("id")))
+                .mpa(ratingMpaStorage.getRatingById(rs.getInt("rating_id")))
                 .build();
     }
 
@@ -52,9 +53,9 @@ public class FilmDbStorage implements FilmStorage {
                 .usingGeneratedKeyColumns("id");
         Long filmId = simpleJdbcInsert.executeAndReturnKey(film.toMap()).longValue();
 
-        List<Integer> genresId = film.getGenresId();
-        if (!genresId.isEmpty()) {
-            genreStorage.addFilmGenres(filmId, genresId);
+        List<Genre> genres = film.getGenres();
+        if (!genres.isEmpty()) {
+            genreStorage.addFilmGenres(filmId, genres);
         }
 
         return film.withId(filmId);
@@ -84,15 +85,15 @@ public class FilmDbStorage implements FilmStorage {
                 film.getDescription(),
                 film.getReleaseDate(),
                 film.getDuration(),
-                film.getRatingMPA_id(),
+                film.getMpa().getId(),
                 film.getId());
 
         if (row != 1) {
             log.error("Запрос обновить несуществующий фильм с id {}.", film.getId());
             throw new NotFoundException(String.format("Фильма с id %d не существует.", film.getId()));
         } else {
-            List<Integer> genresId = film.getGenresId();
-            genreStorage.updateFilmGenres(film.getId(), genresId);
+            List<Genre> genres = film.getGenres();
+            genreStorage.updateFilmGenres(film.getId(), genres);
             return film;
         }
     }
@@ -108,8 +109,8 @@ public class FilmDbStorage implements FilmStorage {
             throw new NotFoundException(String.format("Фильма с id %d не существует.", id));
         } else {
             Film film = films.get(0);
-            List<Integer> genresId = genreStorage.getFilmGenres(film.getId());
-            return film.withGenresId(genresId);
+            List<Genre> genres = genreStorage.getFilmGenres(film.getId());
+            return film.withGenres(genres);
         }
     }
 

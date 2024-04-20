@@ -9,6 +9,5 @@ import javax.validation.constraints.NotBlank;
 @Builder
 public class Genre {
     int id;
-    @NotBlank(message = "Название жанра не может быть пустым.")
     String name;
 }
