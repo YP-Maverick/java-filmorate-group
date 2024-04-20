@@ -36,8 +36,8 @@ public class FriendsDbStorage implements FriendsStorage {
 
         log.debug("Запрос от id {} добавить в друзья id {}.", userId, friendId);
 
-        String sql = "INSERT INTO friends(user_id, friend_id, status) VALUES (?, ?, ?), (?, ?, ?)";
-        jdbcTemplate.update(sql, userId, friendId, true, friendId, userId, true);
+        String sql = "INSERT INTO friends(user_id, friend_id, status) VALUES (?, ?, ?)";
+        jdbcTemplate.update(sql, userId, friendId, true);
     }
 
     @Override
@@ -47,8 +47,8 @@ public class FriendsDbStorage implements FriendsStorage {
 
         log.debug("Запрос от id {} удалить из друзей id {}.", userId, friendId);
 
-        String sql = "DELETE FROM friends WHERE user_Id IN (?, ?) AND friend_Id IN (?, ?) AND status = TRUE";
-        jdbcTemplate.update(sql, userId, friendId, userId, friendId);
+        String sql = "DELETE FROM friends WHERE user_id = ? AND friend_id =?";
+        jdbcTemplate.update(sql, userId, friendId);
 
         return friendId;
     }
