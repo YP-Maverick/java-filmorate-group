@@ -23,7 +23,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User create(User user) {
-        log.debug("Получен запрос создать нового пользователя.");
+        log.debug("Запрос создать нового пользователя.");
 
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("users")
@@ -34,29 +34,24 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User update(User user) {
-        if (!contains(user.getId())) {
-            log.error("Запрос обновить несуществующего пользователя с id {}.", user.getId());
-            throw new NotFoundException(String.format("Пользователя с id %d не существует.", user.getId()));
-        }
-        log.debug("Получен запрос обновить пользователя с id {}.", user.getId());
+        log.debug("Запрос обновить пользователя с id {}.", user.getId());
         String sql = "UPDATE users SET email = ?, login = ?,"
                 + " name = ?, birthday = ? WHERE id = ?";
 
-        jdbcTemplate.update(sql,
+        int row = jdbcTemplate.update(sql,
                 user.getEmail(),
                 user.getLogin(),
                 user.getName(),
                 user.getBirthday(),
                 user.getId());
-        return user;
+        if (row != 1) {
+            log.error("Запрос обновить несуществующего пользователя с id {}.", user.getId());
+            throw new NotFoundException(String.format("Пользователя с id %d не существует.", user.getId()));
+        } else return user;
     }
 
     @Override
     public User delete(Long id) {
-        if (!contains(id)) {
-            log.error("Запрос удалить несуществующего пользователя с id {}.", id);
-            throw new NotFoundException(String.format("Пользователя с id %d не существует.", id));
-        }
         log.debug("Получен запрос удалить пользователя с id {}.", id);
 
         User user = getUserById(id);
@@ -68,14 +63,14 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User getUserById(Long id) {
-        if (!contains(id)) {
-            log.error("Запрос получить несуществующего пользователя с id {}.", id);
-            throw new NotFoundException(String.format("Пользователя с id %d не существует.", id));
-        }
-        log.debug("Получен запрос получить пользователя с id {}.", id);
+        log.debug("Запрос получить пользователя с id {}.", id);
 
         String sql = "SELECT * FROM users WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, mapper::makeUser, id);
+        List<User> users = jdbcTemplate.query(sql, mapper::makeUser, id);
+        if (users.isEmpty()) {
+            log.error("Запрос получить несуществующего пользователя с id {}.", id);
+            throw new NotFoundException(String.format("Пользователя с id %d не существует.", id));
+        } else return users.get(0);
     }
 
     @Override

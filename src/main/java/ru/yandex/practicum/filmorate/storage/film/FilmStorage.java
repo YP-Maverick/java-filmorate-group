@@ -16,4 +16,10 @@ public interface FilmStorage {
     List<Film> findAllFilms();
 
     boolean contains(Long id);
+
+    void addLike(Long filmId, Long userId);
+
+    void deleteLike(Long filmId, Long userId);
+
+    List<Film> getTopFilms(Integer count);
 }

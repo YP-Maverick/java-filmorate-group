@@ -30,15 +30,15 @@ CREATE TABLE IF NOT EXISTS films (
 	description varchar(200),
 	release_date timestamp NOT NULL,
 	duration INTEGER NOT NULL,
-	likes INTEGER NOT NULL DEFAULT 0,
+	likes INTEGER DEFAULT 0,
 	rating_id INTEGER REFERENCES rating_MPA (id),
 	CONSTRAINT name_not_blank CHECK (name <> ''),
-	CONSTRAINT positive CHECK (duration > 0 AND likes > -1)
+	CONSTRAINT positive CHECK (duration > 0)
 );
 
 -- Создание таблицы film_likes
 CREATE TABLE IF NOT EXISTS film_likes (
-	film_id INTEGER REFERENCES films (id),
+	film_id INTEGER REFERENCES films (id) ON DELETE CASCADE,
 	user_id INTEGER REFERENCES users (id),
 	CONSTRAINT pk_film_likes PRIMARY KEY(film_id, user_id)
 
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS genres (
 
 -- Создание таблицы film_genres
 CREATE TABLE IF NOT EXISTS film_genres (
-	film_id INTEGER REFERENCES films (id),
+	film_id INTEGER REFERENCES films (id) ON DELETE CASCADE,
 	genre_id INTEGER REFERENCES genres (id),
 	CONSTRAINT pk_film_genres PRIMARY KEY(film_id, genre_id)
 );

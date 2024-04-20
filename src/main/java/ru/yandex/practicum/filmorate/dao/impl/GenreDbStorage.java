@@ -22,6 +22,8 @@ public class GenreDbStorage implements GenreStorage {
 
     @Override
     public Genre getGenreById(int id) {
+        log.debug("Запрос получить жанр по id {}", id);
+
         String sql = "SELECT * FROM genres WHERE id = ?";
         List<Genre> genre = jdbcTemplate.query(sql, mapper::makeGenre, id);
         if (genre.isEmpty()) {
@@ -32,13 +34,40 @@ public class GenreDbStorage implements GenreStorage {
 
     @Override
     public List<Genre> getAllGenres() {
+        log.debug("Запрос получить список всех жанров");
+
         String sql = "SELECT * FROM genres GROUP BY id";
         return jdbcTemplate.query(sql, mapper::makeGenre);
     }
 
     @Override
     public List<Integer> getFilmGenres(Long filmId) {
+        log.debug("Запрос получить список жанров фильма с id {}", filmId);
+
         String sql = "SELECT genre_id FROM film_genres WHERE film_id = ?";
         return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt("genre_id"), filmId);
+    }
+
+    @Override
+    public void addFilmGenres(Long filmId, List<Integer> genresId) {
+        log.debug("Запрос добавить жанры фильма с id {}", filmId);
+
+        String sql = "INSERT INTO film_genres (film_id, genre_id)"
+                + "VALUES (?, ?)";
+        for (Integer genreId : genresId) {
+            jdbcTemplate.update (sql, filmId, genreId);
+        }
+    }
+
+    @Override
+    public void updateFilmGenres(Long filmId, List<Integer> genresId) {
+        log.debug("Запрос обновить список жанров фильма с id {}", filmId);
+
+        // Удаление прежнего списка жанров
+        String delSql = "DELETE FROM film_genres WHERE film_id = ?";
+        jdbcTemplate.update(delSql, filmId);
+
+        // Добавление нового списка жанров
+        addFilmGenres(filmId, genresId);
     }
 }

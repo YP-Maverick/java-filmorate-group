@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.service.film;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -12,21 +12,17 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
 @Service
 @Slf4j
 public class FilmService {
     private final FilmStorage filmStorage;
+    /*
     private final UserStorage userStorage;
+
     private final Map<Long, Set<Long>> likes = new HashMap<>();
     private final TreeSet<Film> filmRating = new TreeSet<>(Comparator.comparing(Film::getLikes)
             .thenComparing(Film::getId).reversed());
-
-    @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
-        this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
-
-    }
 
     private void checkFilmId(Long filmId) {
         if (!filmStorage.contains(filmId)) {
@@ -41,9 +37,12 @@ public class FilmService {
             throw new NotFoundException("Пользователя с таким id не существует.");
         }
     }
+     */
 
     public void addLike(Long filmId, Long userId) {
-        checkFilmId(filmId);
+        filmStorage.addLike(filmId, userId);
+
+        /*checkFilmId(filmId);
         checkUserId(userId);
         log.debug("Получен запрос добавить лайк.");
 
@@ -59,10 +58,13 @@ public class FilmService {
             log.error("Запрос повторно поставить лайк.");
             throw new ValidationException("Вы можете поставить лайк этому фильму только 1 раз.");
         }
+         */
     }
 
     public void deleteLike(Long filmId, Long userId) {
-        checkFilmId(filmId);
+        filmStorage.deleteLike(filmId, userId);
+
+        /*checkFilmId(filmId);
         checkUserId(userId);
         log.debug("Получен запрос удалить лайк.");
 
@@ -78,27 +80,40 @@ public class FilmService {
             log.error("Запрос удалить непоставленный лайк.");
             throw new ValidationException("Нельзя удалить лайк, который не ставили.");
         }
+
+         */
     }
 
     public List<Film> getTopFilms(Integer count) {
+        return filmStorage.getTopFilms(count);
+        /*
         log.debug("Получен запрос вывести список популярных фильмов");
 
         long size = (count == null || count <= 0) ? 10L : count;
         return filmRating.stream().limit(size).collect(Collectors.toList());
+
+         */
     }
 
     public Film createFilm(Film film) {
+        return filmStorage.createFilm(film);
+        /*
         Film newFilm = filmStorage.createFilm(film);
         likes.put(newFilm.getId(), new HashSet<>());
         filmRating.add(newFilm);
         return newFilm;
+         */
     }
 
     public Film deleteFilm(Long id) {
+        return filmStorage.deleteFilm(id);
+        /*
         likes.remove(id);
         Film delFilm = filmStorage.deleteFilm(id);
         filmRating.remove(delFilm);
         return delFilm;
+
+         */
     }
 
     public Film updateFilm(Film film) {
