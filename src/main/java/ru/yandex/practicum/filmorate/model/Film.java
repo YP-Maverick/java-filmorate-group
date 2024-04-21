@@ -30,7 +30,6 @@ public class Film {
     List<Genre> genres;
     RatingMpa mpa;
 
-
     public Film(Long id, String name, String description, LocalDate releaseDate, int duration,
                 Long likes, List<Genre> genres, RatingMpa mpa) {
         this.id = id;
