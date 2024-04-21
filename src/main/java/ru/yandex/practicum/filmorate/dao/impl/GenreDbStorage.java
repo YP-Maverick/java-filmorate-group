@@ -47,7 +47,6 @@ public class GenreDbStorage implements GenreStorage {
     public List<Genre> getFilmGenres(Long filmId) {
         log.debug("Запрос получить список жанров фильма с id {}", filmId);
 
-        String sql1 = "SELECT genre_id FROM film_genres WHERE film_id = ?";
         String sql = "SELECT * FROM genres WHERE id IN "
                 + "(SELECT genre_id FROM film_genres WHERE film_id = ?)";
         return jdbcTemplate.query(sql, mapper::makeGenre, filmId);

@@ -44,7 +44,6 @@ public class FilmDbStorage implements FilmStorage {
                 .build();
     }
 
-    //TODO: изменить отлов ошибок с несуществующими жанрами и добавить проверку рейтинга!!!
     @Override
     public Film createFilm(Film film) {
         log.debug("Запрос создать новый фильм.");

@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.dao.FriendsStorage;
 import ru.yandex.practicum.filmorate.dao.mapper.ModelMapper;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.List;
 
@@ -18,12 +19,11 @@ import java.util.List;
 @Slf4j
 public class FriendsDbStorage implements FriendsStorage {
     private final JdbcTemplate jdbcTemplate;
+    private final UserStorage userStorage;
     private final ModelMapper mapper;
 
     private void checkId (Long userId) {
-        String sqlCheckId = "SELECT COUNT(*) FROM users WHERE id = ?";
-        int row = jdbcTemplate.queryForObject(sqlCheckId, Integer.class, userId);
-        if (row != 1) {
+        if (!userStorage.contains(userId)) {
             log.error("Неверно указан id {}.", userId);
             throw new NotFoundException(String.format("Пользователя с id %d не существует.",  userId));
         }
