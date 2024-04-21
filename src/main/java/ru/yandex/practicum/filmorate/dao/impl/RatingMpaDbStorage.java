@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.RatingMpaStorage;
 import ru.yandex.practicum.filmorate.dao.mapper.ModelMapper;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.RatingException;
 import ru.yandex.practicum.filmorate.model.RatingMpa;
 
 import java.util.List;
@@ -22,6 +23,8 @@ public class RatingMpaDbStorage implements RatingMpaStorage {
 
     @Override
     public RatingMpa getRatingById(int id) {
+        log.debug("Запорс получить рейтинг MPA по id {}.", id);
+
         String sql = "SELECT * FROM rating_MPA WHERE id = ?";
         List<RatingMpa> rating = jdbcTemplate.query(sql, mapper::makeRatingMpa, id);
         if (rating.isEmpty()) {
@@ -32,7 +35,21 @@ public class RatingMpaDbStorage implements RatingMpaStorage {
 
     @Override
     public List<RatingMpa> getAllRatings() {
+        log.debug("Запорс получить список рейтингов MPA.");
+
         String sql = "SELECT * FROM rating_MPA GROUP BY id";
         return jdbcTemplate.query(sql, mapper::makeRatingMpa);
+    }
+
+    @Override
+    public void checkRatingId(Integer id) {
+        log.debug("Запорс проверить id {} рейтинга MPA.", id);
+
+        String sql = "SELECT * FROM rating_MPA WHERE id = ?";
+        List<RatingMpa> rating = jdbcTemplate.query(sql, mapper::makeRatingMpa, id);
+        if (rating.isEmpty()) {
+            log.error("Рейтинга MPA с id {} нет в БД.", id);
+            throw new RatingException(String.format("Неверно указан id (%d) рейтинга MPA.", id));
+        }
     }
 }

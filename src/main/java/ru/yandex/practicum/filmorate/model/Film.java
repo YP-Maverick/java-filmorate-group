@@ -49,6 +49,7 @@ public class Film {
         values.put("description", description);
         values.put("release_Date", releaseDate);
         values.put("duration", duration);
+        values.put("likes", 0L);
         values.put("rating_id", mpa.getId());
         return values;
     }

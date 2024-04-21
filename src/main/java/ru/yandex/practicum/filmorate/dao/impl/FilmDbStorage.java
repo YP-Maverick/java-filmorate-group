@@ -44,9 +44,16 @@ public class FilmDbStorage implements FilmStorage {
                 .build();
     }
 
+    //TODO: изменить отлов ошибок с несуществующими жанрами и добавить проверку рейтинга!!!
     @Override
     public Film createFilm(Film film) {
         log.debug("Запрос создать новый фильм.");
+
+        // Проверка существования жанров и рейтинга MPA
+        for (Genre genre : film.getGenres()) {
+            genreStorage.checkGenreId(genre.getId());
+        }
+        ratingMpaStorage.checkRatingId(film.getMpa().getId());
 
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("films")
@@ -55,9 +62,9 @@ public class FilmDbStorage implements FilmStorage {
 
         List<Genre> genres = film.getGenres();
         if (!genres.isEmpty()) {
-            genreStorage.addFilmGenres(filmId, genres);
+            genres = genreStorage.addFilmGenres(filmId, genres);
+            return film.withId(filmId).withGenres(genres);
         }
-
         return film.withId(filmId);
     }
 
@@ -122,7 +129,6 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sql, this::makeFilm);
     }
 
-    //TODO: Удалить потом
     @Override
     public boolean contains(Long id) {
         String sql = "SELECT COUNT(*) FROM films WHERE id = ?";
@@ -171,7 +177,7 @@ public class FilmDbStorage implements FilmStorage {
         log.debug("Получен запрос вывести список популярных фильмов");
 
         long size = (count == null || count <= 0) ? 10L : count;
-        String sql = "SELECT * FROM films ORDER BY likes DESC LIMIT ?";
+        String sql = "SELECT * FROM films  ORDER BY likes DESC LIMIT ?";
         return jdbcTemplate.query(sql, this::makeFilm, size);
     }
 }

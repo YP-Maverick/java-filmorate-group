@@ -5,10 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.yandex.practicum.filmorate.exception.GenreException;
-import ru.yandex.practicum.filmorate.exception.LikeException;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.*;
 
 import java.util.Map;
 
@@ -49,6 +46,14 @@ public class ErrorHandler {
     @ExceptionHandler({GenreException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleGenreExc(final GenreException e) {
+        log(e);
+        return Map.of("error", "Like error",
+                "errorMessage", e.getMessage());
+    }
+
+    @ExceptionHandler({RatingException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleRatingExc(final RatingException e) {
         log(e);
         return Map.of("error", "Like error",
                 "errorMessage", e.getMessage());
