@@ -10,7 +10,7 @@ public interface GenreStorage {
     List<Genre> getFilmGenres(Long filmId);
     List<Genre> addFilmGenres(Long filmId, List<Genre> genres);
 
-    void updateFilmGenres(Long filmId, List<Genre> genres);
+    List<Genre> updateFilmGenres(Long filmId, List<Genre> genres);
 
     void checkGenreId(Integer genreId);
 }

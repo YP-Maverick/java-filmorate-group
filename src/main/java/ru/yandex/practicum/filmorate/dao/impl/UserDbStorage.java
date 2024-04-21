@@ -35,6 +35,7 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User update(User user) {
         log.debug("Запрос обновить пользователя с id {}.", user.getId());
+
         String sql = "UPDATE users SET email = ?, login = ?,"
                 + " name = ?, birthday = ? WHERE id = ?";
 
@@ -52,7 +53,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User delete(Long id) {
-        log.debug("Получен запрос удалить пользователя с id {}.", id);
+        log.debug("Запрос удалить пользователя с id {}.", id);
 
         User user = getUserById(id);
         String sql = "DELETE FROM users WHERE id = ?";
@@ -75,12 +76,16 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> findAllUsers() {
+        log.debug("Запрос получить список всех пользователей.");
+
         String sql = "SELECT * FROM users";
         return jdbcTemplate.query(sql, mapper::makeUser);
     }
 
     @Override
     public boolean contains(Long id) {
+        log.debug("Запрос проверить наличие в БД  пользователя с id {}.", id);
+
         String sql = "SELECT COUNT(*) FROM users WHERE id = ?";
         int count = jdbcTemplate.queryForObject(sql, Integer.class, id);
         return count == 1;

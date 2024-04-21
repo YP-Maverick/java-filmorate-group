@@ -71,7 +71,7 @@ public class GenreDbStorage implements GenreStorage {
     }
 
     @Override
-    public void updateFilmGenres(Long filmId, List<Genre> genres) {
+    public List<Genre> updateFilmGenres(Long filmId, List<Genre> genres) {
         log.debug("Запрос обновить список жанров фильма с id {}", filmId);
 
         // Удаление прежнего списка жанров
@@ -79,7 +79,7 @@ public class GenreDbStorage implements GenreStorage {
         jdbcTemplate.update(delSql, filmId);
 
         // Добавление нового списка жанров
-        addFilmGenres(filmId, genres);
+        return addFilmGenres(filmId, genres);
     }
 
     @Override

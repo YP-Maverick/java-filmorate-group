@@ -82,6 +82,12 @@ public class FilmDbStorage implements FilmStorage {
     public Film updateFilm(Film film) {
         log.debug("Запрос обновить фильм с id {}.", film.getId());
 
+        // Проверка существования жанров и рейтинга MPA
+        for (Genre genre : film.getGenres()) {
+            genreStorage.checkGenreId(genre.getId());
+        }
+        ratingMpaStorage.checkRatingId(film.getMpa().getId());
+
         String sql = "UPDATE films SET name = ?, description = ?, "
                 + "release_date = ?, duration = ?, "
                 + "rating_id = ? WHERE id = ?";
@@ -99,14 +105,14 @@ public class FilmDbStorage implements FilmStorage {
             throw new NotFoundException(String.format("Фильма с id %d не существует.", film.getId()));
         } else {
             List<Genre> genres = film.getGenres();
-            genreStorage.updateFilmGenres(film.getId(), genres);
-            return film;
+            genres = genreStorage.updateFilmGenres(film.getId(), genres);
+            return film.withGenres(genres);
         }
     }
 
     @Override
     public Film getFilmById(Long id) {
-        log.debug("Запрос получить фильм по id {}", id);
+        log.debug("Запрос получить фильм по id {}.", id);
 
         String sql = "SELECT * FROM films WHERE id = ?";
         List<Film> films = jdbcTemplate.query(sql, this::makeFilm, id);
@@ -122,7 +128,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> findAllFilms() {
-        log.debug("Запрос получить список всех фильмов");
+        log.debug("Запрос получить список всех фильмов.");
 
         String sql = "SELECT * FROM FILMS";
         return jdbcTemplate.query(sql, this::makeFilm);
@@ -130,6 +136,8 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public boolean contains(Long id) {
+        log.debug("Запрос проверить наличие в БД  фильма с id {}.", id);
+
         String sql = "SELECT COUNT(*) FROM films WHERE id = ?";
         int count = jdbcTemplate.queryForObject(sql, Integer.class, id);
         return count == 1;
