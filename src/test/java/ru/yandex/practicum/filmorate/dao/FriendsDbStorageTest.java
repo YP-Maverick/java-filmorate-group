@@ -67,9 +67,9 @@ public class FriendsDbStorageTest {
         // Проверка метода deleteFriend()
         friendsStorage.deleteFriend(user.getId(), friend.getId());
 
-        List<User> withoutfriends = friendsStorage.getAllFriends(user.getId());
+        List<User> withoutFriends = friendsStorage.getAllFriends(user.getId());
 
-        assertThat(withoutfriends)
+        assertThat(withoutFriends)
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(new ArrayList<>());

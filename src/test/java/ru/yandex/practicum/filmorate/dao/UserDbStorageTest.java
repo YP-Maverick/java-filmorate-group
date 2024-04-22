@@ -55,8 +55,14 @@ public class UserDbStorageTest {
                 .name("Ivan Petrov")
                 .birthday(LocalDate.of(1990, 1, 1))
                 .build();
+        // Проверка метода create()
         User newUser = userStorage.create(user);
+        assertThat(newUser)
+                .isNotNull()
+                .usingRecursiveComparison()
+                .isEqualTo(user.withId(newUser.getId()));
 
+        // Проверка метода getUserById()
         User savedUser = userStorage.getUserById(newUser.getId());
 
         assertThat(savedUser)
@@ -64,6 +70,7 @@ public class UserDbStorageTest {
                 .usingRecursiveComparison()
                 .isEqualTo(user.withId(newUser.getId()));
 
+        // Проверка метода contains()
         boolean isUserExist = userStorage.contains(savedUser.getId());
         assertTrue(isUserExist, "User с id " + savedUser.getId() + "не найден.");
     }
@@ -83,6 +90,7 @@ public class UserDbStorageTest {
                 .birthday(LocalDate.of(1990, 1, 1))
                 .build();
 
+        // Проверка метода update()
         User updatedUser = userStorage.update(toUpdateUser);
 
         assertThat(updatedUser)
@@ -90,6 +98,7 @@ public class UserDbStorageTest {
                 .usingRecursiveComparison()
                 .isEqualTo(toUpdateUser);
 
+        // Проверка метода delete()
         User deletedUser = userStorage.delete(updatedUser.getId());
 
         assertThat(deletedUser)
@@ -124,6 +133,8 @@ public class UserDbStorageTest {
         User user3 = userStorage.create(thirdUser);
 
         List<User> users = List.of(user1, user2, user3);
+
+        // Проверка метода findAllUsers()
         List<User> savedUsers = userStorage.findAllUsers();
 
         assertTrue(savedUsers.containsAll(users));

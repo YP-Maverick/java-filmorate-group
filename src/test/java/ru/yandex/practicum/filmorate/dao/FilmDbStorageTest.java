@@ -275,6 +275,8 @@ public class FilmDbStorageTest {
         List<Film> topFilms = filmStorage.getTopFilms(3);
 
         assertThat(topFilms)
+                .isNotNull()
+                .usingRecursiveComparison()
                 .isEqualTo(shouldTopFilmsList);
     }
 }

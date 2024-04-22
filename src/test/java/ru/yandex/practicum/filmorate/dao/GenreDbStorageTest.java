@@ -62,6 +62,7 @@ public class GenreDbStorageTest {
 
         assertThat(savedGenre)
                 .isNotNull()
+                .usingRecursiveComparison()
                 .isEqualTo(genre);
 
         List<Genre> genres = new ArrayList<>();
@@ -92,6 +93,7 @@ public class GenreDbStorageTest {
 
         assertThat(savedGenres)
                 .isNotNull()
+                .usingRecursiveComparison()
                 .isEqualTo(genres);
     }
 
@@ -125,12 +127,14 @@ public class GenreDbStorageTest {
         List<Genre> savedGenres = genreStorage.addFilmGenres(newfilm.getId(), genres);
         assertThat(savedGenres)
                 .isNotNull()
+                .usingRecursiveComparison()
                 .isEqualTo(genres);
 
         // Проверка метода getFilmGenres()
         List<Genre> filmGenres = genreStorage.getFilmGenres(newfilm.getId());
         assertThat(filmGenres)
                 .isNotNull()
+                .usingRecursiveComparison()
                 .isEqualTo(genres);
 
         List<Genre> toUpdateGenres = new ArrayList<>();
@@ -147,11 +151,13 @@ public class GenreDbStorageTest {
         List<Genre> updatedGenres = genreStorage.updateFilmGenres(newfilm.getId(), toUpdateGenres);
         assertThat(updatedGenres)
                 .isNotNull()
+                .usingRecursiveComparison()
                 .isEqualTo(toUpdateGenres);
 
         List<Genre> newFilmGenres = genreStorage.getFilmGenres(newfilm.getId());
         assertThat(newFilmGenres)
                 .isNotNull()
+                .usingRecursiveComparison()
                 .isEqualTo(updatedGenres);
     }
  }
