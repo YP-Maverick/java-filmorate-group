@@ -2,8 +2,6 @@ package ru.yandex.practicum.filmorate.dao.mapper;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.dao.GenreStorage;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.RatingMpa;
 import ru.yandex.practicum.filmorate.model.User;
@@ -14,7 +12,6 @@ import java.sql.SQLException;
 @AllArgsConstructor
 @Component
 public class ModelMapper {
-    // private final GenreStorage genreStorage;
     public User makeUser(ResultSet rs, int rowNum) throws SQLException {
         return User.builder()
                 .id(rs.getLong("id"))
@@ -24,21 +21,6 @@ public class ModelMapper {
                 .birthday(rs.getDate("birthday").toLocalDate())
                 .build();
     }
-
-    /*
-    public Film makeFilm(ResultSet rs, int rowNum) throws SQLException {
-        return Film.builder()
-                .id(rs.getLong("id"))
-                .name(rs.getString("name"))
-                .description(rs.getString("description"))
-                .releaseDate(rs.getDate("releaseDate").toLocalDate())
-                .duration(rs.getInt("duration"))
-                .likes(rs.getInt("likes"))
-                .genres_id(genreStorage.getFilmGenres(rs.getLong("id")))
-                .ratingMPA_id(rs.getInt("rating_id"))
-                .build();
-    }
-     */
 
     public Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
         return Genre.builder()

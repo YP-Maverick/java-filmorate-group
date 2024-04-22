@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.service.user;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.FriendsStorage;
 import ru.yandex.practicum.filmorate.model.User;
@@ -11,7 +10,6 @@ import java.util.*;
 
 @AllArgsConstructor
 @Service
-@Slf4j
 public class UserService {
     private final UserStorage userStorage;
     private final FriendsStorage friendsStorage;
