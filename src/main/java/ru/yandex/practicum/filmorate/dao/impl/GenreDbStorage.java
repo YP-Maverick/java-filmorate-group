@@ -62,7 +62,7 @@ public class GenreDbStorage implements GenreStorage {
         for (Genre genre : genres) {
             try {
                 jdbcTemplate.update(sql, filmId, genre.getId());
-            }catch(DuplicateKeyException e) {
+            } catch (DuplicateKeyException e) {
                 genresToBeRemoved.add(genre);
             }
         }
