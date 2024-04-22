@@ -71,6 +71,7 @@ public class FriendsDbStorageTest {
 
         assertThat(withoutfriends)
                 .isNotNull()
+                .usingRecursiveComparison()
                 .isEqualTo(new ArrayList<>());
     }
 
@@ -95,6 +96,7 @@ public class FriendsDbStorageTest {
 
         assertThat(shouldCommonFriends)
                 .isNotNull()
+                .usingRecursiveComparison()
                 .isEqualTo(commonFriends);
     }
 
