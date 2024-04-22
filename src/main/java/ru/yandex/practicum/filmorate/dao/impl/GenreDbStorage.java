@@ -61,8 +61,8 @@ public class GenreDbStorage implements GenreStorage {
         List<Genre> genresToBeRemoved = new ArrayList<>();
         for (Genre genre : genres) {
             try {
-                jdbcTemplate.update (sql, filmId, genre.getId());
-            } catch (DuplicateKeyException e ) {
+                jdbcTemplate.update(sql, filmId, genre.getId());
+            } catch(DuplicateKeyException e ) {
                 genresToBeRemoved.add(genre);
             }
         }
