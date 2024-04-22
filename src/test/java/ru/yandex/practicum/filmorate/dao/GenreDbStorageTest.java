@@ -29,7 +29,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class GenreDbStorageTest {
     private final JdbcTemplate jdbcTemplate;
     private FilmStorage filmStorage;
-    private UserStorage userStorage;
     private static ModelMapper modelMapper;
 
     private GenreStorage genreStorage;
@@ -42,7 +41,7 @@ public class GenreDbStorageTest {
     @BeforeEach
     public void beforeEach() {
         genreStorage = new GenreDbStorage(jdbcTemplate, modelMapper);
-        userStorage = new UserDbStorage(jdbcTemplate, modelMapper);
+        UserStorage userStorage = new UserDbStorage(jdbcTemplate, modelMapper);
         RatingMpaStorage ratingMpaStorage = new RatingMpaDbStorage(jdbcTemplate, modelMapper);
         filmStorage = new FilmDbStorage(jdbcTemplate, genreStorage,
                 ratingMpaStorage, userStorage);
