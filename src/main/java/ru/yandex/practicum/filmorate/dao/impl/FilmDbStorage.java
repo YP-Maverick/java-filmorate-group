@@ -30,7 +30,7 @@ public class FilmDbStorage implements FilmStorage {
     private final RatingMpaStorage ratingMpaStorage;
     private final UserStorage userStorage;
 
-    // Не в ModelMapper.java, чтобы избежать зацикливания с GenreStorage
+    // Не в ModelMapper.java, чтобы избежать зацикливания с GenreStorage и RatingMpaStorage
     private Film makeFilm(ResultSet rs, int rowNum) throws SQLException {
         return Film.builder()
                 .id(rs.getLong("id"))
@@ -45,7 +45,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film createFilm(Film film) {
+    public Film create(Film film) {
         log.debug("Запрос создать новый фильм.");
 
         // Проверка существования жанров и рейтинга MPA

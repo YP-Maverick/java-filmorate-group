@@ -25,7 +25,7 @@ public class FilmService {
     }
 
     public Film createFilm(Film film) {
-        return filmStorage.createFilm(film);
+        return filmStorage.create(film);
     }
 
     public Film deleteFilm(Long id) {

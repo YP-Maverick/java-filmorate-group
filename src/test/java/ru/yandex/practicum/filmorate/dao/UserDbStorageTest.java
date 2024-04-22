@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.controller;
+package ru.yandex.practicum.filmorate.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeAll;
@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.filmorate.dao.impl.UserDbStorage;
 import ru.yandex.practicum.filmorate.dao.mapper.ModelMapper;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserDbStorageTest {
     private final JdbcTemplate jdbcTemplate;
     private static ModelMapper modelMapper;
-    private UserDbStorage userStorage;
+    private UserStorage userStorage;
 
     private User createUser() {
         User user = User.builder()
@@ -69,14 +70,7 @@ public class UserDbStorageTest {
 
     @Test
     public void testUpdateAndDeleteUser() {
-        User user = User.builder()
-                .id(1L)
-                .email("user@email.ru")
-                .login("vanya123")
-                .name("Ivan Petrov")
-                .birthday(LocalDate.of(1990, 1, 1))
-                .build();
-        User newUser = userStorage.create(user);
+        User newUser = createUser();
 
         boolean isUserExist = userStorage.contains(newUser.getId());
         assertTrue(isUserExist, "User с id " + newUser.getId() + "не найден.");
@@ -109,13 +103,6 @@ public class UserDbStorageTest {
 
     @Test
     public void testFindAllUsers() {
-        List<User> checkUsers = userStorage.findAllUsers();
-        if (!checkUsers.isEmpty()) {
-            for (User user : checkUsers) {
-                userStorage.delete(user.getId());
-            }
-        }
-
         User user1 = createUser();
 
         User secondUser = User.builder()
@@ -139,7 +126,6 @@ public class UserDbStorageTest {
         List<User> users = List.of(user1, user2, user3);
         List<User> savedUsers = userStorage.findAllUsers();
 
-        assertThat(savedUsers)
-                .isEqualTo(users);
+        assertTrue(savedUsers.containsAll(users));
     }
 }

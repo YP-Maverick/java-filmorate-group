@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.dao.mapper;
 
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.RatingMpa;
@@ -9,7 +8,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-@AllArgsConstructor
 @Component
 public class ModelMapper {
     public User makeUser(ResultSet rs, int rowNum) throws SQLException {

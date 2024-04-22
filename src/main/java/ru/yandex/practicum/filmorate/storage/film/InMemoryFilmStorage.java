@@ -27,7 +27,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film createFilm(Film film) {
+    public Film create(Film film) {
         log.debug("Получен запрос создать новый фильм.");
 
         Film newFilm = film.withId(createId())
