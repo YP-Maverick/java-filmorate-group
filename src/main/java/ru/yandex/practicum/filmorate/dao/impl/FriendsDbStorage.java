@@ -22,7 +22,7 @@ public class FriendsDbStorage implements FriendsStorage {
     private final UserStorage userStorage;
     private final ModelMapper mapper;
 
-    private void checkId (Long userId) {
+    private void checkId(Long userId) {
         if (!userStorage.contains(userId)) {
             log.error("Неверно указан id {}.", userId);
             throw new NotFoundException(String.format("Пользователя с id %d не существует.",  userId));
