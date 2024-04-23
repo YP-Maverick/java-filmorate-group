@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.controller.adapter.DateAdapter;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.RatingMpa;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
 
 import javax.validation.ConstraintViolation;
@@ -47,10 +48,13 @@ public class FilmControllerTest {
     @Test
     public void createFilm() throws Exception {
         film = Film.builder()
-                .id(1L)
-                .name("film_name").description("film_descr")
+                .name("film_name")
+                .description("film_descr")
                 .releaseDate(LocalDate.parse("2000-02-02"))
                 .duration(90)
+                .mpa(RatingMpa.builder()
+                        .id(1)
+                        .build())
                 .build();
 
         Set<ConstraintViolation<Film>> constraintViolations = validator.validate(film);
@@ -80,6 +84,9 @@ public class FilmControllerTest {
                 .description("film_descr")
                 .releaseDate(LocalDate.parse("2000-02-02"))
                 .duration(90)
+                .mpa(RatingMpa.builder()
+                        .id(1)
+                        .build())
                 .build();
 
         Set<ConstraintViolation<Film>> blankViol = validator.validate(film);
@@ -99,6 +106,9 @@ public class FilmControllerTest {
                 .description("film_descr")
                 .releaseDate(LocalDate.parse("2000-02-02"))
                 .duration(90)
+                .mpa(RatingMpa.builder()
+                        .id(1)
+                        .build())
                 .build();
 
         Set<ConstraintViolation<Film>> nullViol = validator.validate(film);
@@ -117,6 +127,9 @@ public class FilmControllerTest {
                 .description("1".repeat(201))
                 .releaseDate(LocalDate.parse("2000-02-02"))
                 .duration(90)
+                .mpa(RatingMpa.builder()
+                        .id(1)
+                        .build())
                 .build();
 
         Set<ConstraintViolation<Film>> violation = validator.validate(film);
@@ -136,6 +149,9 @@ public class FilmControllerTest {
                 .description("film_descr")
                 .releaseDate(LocalDate.parse("1895-12-28"))
                 .duration(90)
+                .mpa(RatingMpa.builder()
+                        .id(1)
+                        .build())
                 .build();
 
         Set<ConstraintViolation<Film>> violation = validator.validate(film);
@@ -148,6 +164,9 @@ public class FilmControllerTest {
                 .description("film_descr")
                 .releaseDate(LocalDate.parse("1895-12-27"))
                 .duration(90)
+                .mpa(RatingMpa.builder()
+                        .id(1)
+                        .build())
                 .build();
 
         Set<ConstraintViolation<Film>> afterViol = validator.validate(newFilm);
@@ -167,6 +186,9 @@ public class FilmControllerTest {
                 .description("film_descr")
                 .releaseDate(LocalDate.parse("2000-02-02"))
                 .duration(0)
+                .mpa(RatingMpa.builder()
+                        .id(1)
+                        .build())
                 .build();
 
         Set<ConstraintViolation<Film>> violation = validator.validate(film);
@@ -186,6 +208,9 @@ public class FilmControllerTest {
                 .description("film_descr")
                 .releaseDate(LocalDate.parse("2000-02-02"))
                 .duration(-1)
+                .mpa(RatingMpa.builder()
+                        .id(1)
+                        .build())
                 .build();
 
         Set<ConstraintViolation<Film>> negativeViol = validator.validate(film);

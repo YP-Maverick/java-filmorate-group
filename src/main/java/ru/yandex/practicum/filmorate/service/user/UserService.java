@@ -1,29 +1,26 @@
 package ru.yandex.practicum.filmorate.service.user;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.FriendsStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.dao.UserStorage;
 
 import java.util.*;
 
+@AllArgsConstructor
 @Service
 @Slf4j
 public class UserService {
     private final UserStorage userStorage;
-    private final Map<Long, Set<Long>> friends = new HashMap<>();
+    private final FriendsStorage friendsStorage;
 
-    @Autowired
-    public UserService(UserStorage userStorage) {
-        this.userStorage = userStorage;
-    }
-
-    private void checkId(Long id) {
-        if (!userStorage.contains(id)) {
-            log.error("Указан id несуществующего пользователя.");
-            throw new NotFoundException("Пользователя с таким id не существует.");
+    private void checkId(Long userId) {
+        if (!userStorage.contains(userId)) {
+            log.error("Неверно указан id пользователя: {}.", userId);
+            throw new NotFoundException(String.format("Пользователя с id %d не существует.",  userId));
         }
     }
 
@@ -31,65 +28,28 @@ public class UserService {
         checkId(userId);
         checkId(friendId);
 
-        log.debug("Получен запрос добавления в друзья.");
-
-        addToFriends(userId, friendId);
-        addToFriends(friendId, userId);
+        friendsStorage.addFriend(userId, friendId);
     }
 
-    private void addToFriends(Long userId, Long friendId) {
-        Set<Long> userFriends = friends.get(userId);
-        userFriends.add(friendId);
-    }
-
-    public User deleteFriend(Long userId, Long friendId) {
+    public long deleteFriend(Long userId, Long friendId) {
         checkId(userId);
         checkId(friendId);
 
-        log.debug("Получен запрос удаления из друзей.");
-
-        removeFromFriends(userId, friendId);
-        removeFromFriends(friendId, userId);
-        return userStorage.getUserById(friendId);
-    }
-
-    private void removeFromFriends(Long userId, Long delUserId) {
-        Set<Long> userFriends = friends.get(userId);
-        userFriends.remove(delUserId);
+        return friendsStorage.deleteFriend(userId, friendId);
     }
 
     public List<User> getAllFriends(Long id) {
         checkId(id);
 
-        log.debug("Получен запрос получения списка друзей.");
-
-        List<User> userFriends = new ArrayList<>();
-        for (Long friendId : friends.get(id)) {
-            User friend = userStorage.getUserById(friendId);
-            userFriends.add(friend);
-        }
-        return userFriends;
+        return friendsStorage.getAllFriends(id);
     }
 
     public List<User> getCommonFriends(Long userId, Long otherId) {
-        checkId(userId);
-        checkId(otherId);
-
-        log.debug("Получен запрос получения списка общих друзей.");
-
-        Set<Long> userFriends = new HashSet<>(friends.get(userId));
-        userFriends.retainAll(friends.get(otherId));
-        List<User> commonFriends = new ArrayList<>();
-        for (Long id : userFriends) {
-            commonFriends.add(userStorage.getUserById(id));
-        }
-        return commonFriends;
+        return friendsStorage.getCommonFriends(userId, otherId);
     }
 
     public User createUser(User user) {
-        User newUser = userStorage.create(user);
-        friends.put(newUser.getId(), new HashSet<>());
-        return newUser;
+        return userStorage.create(user);
     }
 
     public User updateUser(User user) {
@@ -97,11 +57,7 @@ public class UserService {
     }
 
     public User deleteUser(Long id) {
-        User delUser = userStorage.delete(id);
-        for (Long friendId : friends.get(id)) {
-            friends.get(friendId).remove(id);
-        }
-        return delUser;
+        return userStorage.delete(id);
     }
 
     public User getUserById(Long id) {
