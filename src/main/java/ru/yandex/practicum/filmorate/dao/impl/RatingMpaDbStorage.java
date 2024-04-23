@@ -52,13 +52,4 @@ public class RatingMpaDbStorage implements RatingMpaStorage {
             throw new RatingException(String.format("Неверно указан id (%d) рейтинга MPA.", id));
         }
     }
-
-    @Override
-    public RatingMpa getFilmRating(Long filmId) {
-        log.debug("Запрос получить рейтинг MPA по id фильма {}.", filmId);
-
-        String sql = "SELECT * FROM rating_MPA WHERE id IN "
-                + "(SELECT rating_id FROM films WHERE id = ?)";
-        return jdbcTemplate.query(sql, mapper::makeRatingMpa, filmId).get(0);
-    }
 }

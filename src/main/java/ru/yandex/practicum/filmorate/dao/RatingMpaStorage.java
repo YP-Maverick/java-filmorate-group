@@ -10,6 +10,4 @@ public interface RatingMpaStorage {
     List<RatingMpa> getAllRatings();
 
     void checkRatingId(Integer id);
-
-    RatingMpa getFilmRating(Long filmId);
 }

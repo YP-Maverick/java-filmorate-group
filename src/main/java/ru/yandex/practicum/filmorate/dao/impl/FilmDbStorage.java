@@ -8,15 +8,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.GenreStorage;
+import ru.yandex.practicum.filmorate.dao.mapper.ModelMapper;
 import ru.yandex.practicum.filmorate.exception.LikeException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.RatingMpa;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -28,22 +26,7 @@ import java.util.List;
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final GenreStorage genreStorage;
-
-    // Не в ModelMapper.java, чтобы избежать зацикливания с GenreStorage и RatingMpaStorage
-    private Film makeFilm(ResultSet rs, int rowNum) throws SQLException {
-        return Film.builder()
-                .id(rs.getLong("id"))
-                .name(rs.getString("name"))
-                .description(rs.getString("description"))
-                .releaseDate(rs.getDate("release_Date").toLocalDate())
-                .duration(rs.getInt("duration"))
-                .likes(rs.getLong("likes"))
-                .mpa(RatingMpa.builder()
-                        .id(rs.getInt("rating_id"))
-                        .name(rs.getString("rating_name"))
-                        .build())
-                .build();
-    }
+    private final ModelMapper mapper;
 
     @Override
     public Film create(Film film) {
@@ -108,7 +91,7 @@ public class FilmDbStorage implements FilmStorage {
                 + "FROM films f "
                 + "JOIN rating_MPA rm ON rm.ID = f.rating_id "
                 + "WHERE f.id = ?;";
-        List<Film> films = jdbcTemplate.query(sql, this::makeFilm, id);
+        List<Film> films = jdbcTemplate.query(sql, mapper::makeFilm, id);
         if (films.isEmpty()) {
             log.error("Запрос получить фильм по неверному id {}.", id);
             throw new NotFoundException(String.format("Фильма с id %d не существует.", id));
@@ -123,7 +106,7 @@ public class FilmDbStorage implements FilmStorage {
                 + "rm.name AS rating_name "
                 + "FROM films f "
                 + "JOIN rating_MPA rm ON rm.ID = f.rating_id ";
-        return jdbcTemplate.query(sql, this::makeFilm);
+        return jdbcTemplate.query(sql, mapper::makeFilm);
     }
 
     @Override
@@ -168,7 +151,11 @@ public class FilmDbStorage implements FilmStorage {
         log.debug("Получен запрос вывести список популярных фильмов");
 
         long size = (count == null || count <= 0) ? 10L : count;
-        String sql = "SELECT * FROM films  ORDER BY likes DESC LIMIT ?";
-        return jdbcTemplate.query(sql, this::makeFilm, size);
+        String sql = "SELECT f.*, "
+                + "rm.name AS rating_name "
+                + "FROM films f "
+                + "JOIN rating_MPA rm ON rm.ID = f.rating_id "
+                + "ORDER BY likes DESC LIMIT ?";
+        return jdbcTemplate.query(sql, mapper::makeFilm, size);
     }
 }
