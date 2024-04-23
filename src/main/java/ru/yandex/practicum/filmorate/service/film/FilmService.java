@@ -3,8 +3,11 @@ package ru.yandex.practicum.filmorate.service.film;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.GenreStorage;
+import ru.yandex.practicum.filmorate.dao.RatingMpaStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -16,6 +19,8 @@ import java.util.*;
 public class FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
+    private final GenreStorage genreStorage;
+    private final RatingMpaStorage ratingMpaStorage;
 
     private void checkFilmAndUserId(Long filmId, Long userId) {
         if (!filmStorage.contains(filmId)) {
@@ -44,6 +49,10 @@ public class FilmService {
     }
 
     public Film createFilm(Film film) {
+        // Проверка существования жанров и рейтинга MPA
+        genreStorage.checkGenres(film.getGenres());
+        ratingMpaStorage.checkRatingId(film.getMpa().getId());
+
         return filmStorage.create(film);
     }
 
@@ -52,6 +61,10 @@ public class FilmService {
     }
 
     public Film updateFilm(Film film) {
+        // Проверка существования жанров и рейтинга MPA
+        genreStorage.checkGenres(film.getGenres());
+        ratingMpaStorage.checkRatingId(film.getMpa().getId());
+
         return filmStorage.updateFilm(film);
     }
 
@@ -60,6 +73,9 @@ public class FilmService {
     }
 
     public Film getFilmById(Long id) {
-        return filmStorage.getFilmById(id);
+        Film film = filmStorage.getFilmById(id);
+        Set<Genre> genres = genreStorage.getFilmGenres(film.getId());
+
+        return film.withGenres(genres);
     }
 }

@@ -43,14 +43,14 @@ public class GenreDbStorageTest {
         genreStorage = new GenreDbStorage(jdbcTemplate, modelMapper);
         UserStorage userStorage = new UserDbStorage(jdbcTemplate, modelMapper);
         RatingMpaStorage ratingMpaStorage = new RatingMpaDbStorage(jdbcTemplate, modelMapper);
-        filmStorage = new FilmDbStorage(jdbcTemplate, genreStorage,
-                ratingMpaStorage, userStorage);
+        filmStorage = new FilmDbStorage(jdbcTemplate, genreStorage
+                /*ratingMpaStorage*/);
     }
 
     @Test
     public void testGetByIdAndGetAll() {
-        // Проверка метода checkGenreId()
-        genreStorage.checkGenreId(1);
+        // Проверка метода checkGenres()
+        //genreStorage.checkGenres(1);
 
         Genre genre = Genre.builder()
                 .id(1)

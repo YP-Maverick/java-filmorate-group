@@ -8,13 +8,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.GenreStorage;
-import ru.yandex.practicum.filmorate.dao.RatingMpaStorage;
 import ru.yandex.practicum.filmorate.exception.LikeException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.RatingMpa;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,7 +28,6 @@ import java.util.List;
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final GenreStorage genreStorage;
-    private final RatingMpaStorage ratingMpaStorage;
 
     // Не в ModelMapper.java, чтобы избежать зацикливания с GenreStorage и RatingMpaStorage
     private Film makeFilm(ResultSet rs, int rowNum) throws SQLException {
@@ -40,20 +38,16 @@ public class FilmDbStorage implements FilmStorage {
                 .releaseDate(rs.getDate("release_Date").toLocalDate())
                 .duration(rs.getInt("duration"))
                 .likes(rs.getLong("likes"))
-                .genres(new HashSet<>(genreStorage.getFilmGenres(rs.getLong("id"))))
-                .mpa(ratingMpaStorage.getRatingById(rs.getInt("rating_id")))
+                .mpa(RatingMpa.builder()
+                        .id(rs.getInt("rating_id"))
+                        .name(rs.getString("rating_name"))
+                        .build())
                 .build();
     }
 
     @Override
     public Film create(Film film) {
         log.debug("Запрос создать новый фильм.");
-
-        // Проверка существования жанров и рейтинга MPA
-        for (Genre genre : film.getGenres()) {
-            genreStorage.checkGenreId(genre.getId());
-        }
-        ratingMpaStorage.checkRatingId(film.getMpa().getId());
 
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("films")
@@ -83,12 +77,6 @@ public class FilmDbStorage implements FilmStorage {
     public Film updateFilm(Film film) {
         log.debug("Запрос обновить фильм с id {}.", film.getId());
 
-        // Проверка существования жанров и рейтинга MPA
-        for (Genre genre : film.getGenres()) {
-            genreStorage.checkGenreId(genre.getId());
-        }
-        ratingMpaStorage.checkRatingId(film.getMpa().getId());
-
         String sql = "UPDATE films SET name = ?, description = ?, "
                 + "release_date = ?, duration = ?, "
                 + "rating_id = ? WHERE id = ?";
@@ -115,23 +103,26 @@ public class FilmDbStorage implements FilmStorage {
     public Film getFilmById(Long id) {
         log.debug("Запрос получить фильм по id {}.", id);
 
-        String sql = "SELECT * FROM films WHERE id = ?";
+        String sql = "SELECT f.*, "
+                + "rm.name AS rating_name "
+                + "FROM films f "
+                + "JOIN rating_MPA rm ON rm.ID = f.rating_id "
+                + "WHERE f.id = ?;";
         List<Film> films = jdbcTemplate.query(sql, this::makeFilm, id);
         if (films.isEmpty()) {
             log.error("Запрос получить фильм по неверному id {}.", id);
             throw new NotFoundException(String.format("Фильма с id %d не существует.", id));
-        } else {
-            Film film = films.get(0);
-            List<Genre> genres = genreStorage.getFilmGenres(film.getId());
-            return film.withGenres(new HashSet<>(genres));
-        }
+        } else return films.get(0);
     }
 
     @Override
     public List<Film> findAllFilms() {
         log.debug("Запрос получить список всех фильмов.");
 
-        String sql = "SELECT * FROM FILMS";
+        String sql = "SELECT f.*, "
+                + "rm.name AS rating_name "
+                + "FROM films f "
+                + "JOIN rating_MPA rm ON rm.ID = f.rating_id ";
         return jdbcTemplate.query(sql, this::makeFilm);
     }
 

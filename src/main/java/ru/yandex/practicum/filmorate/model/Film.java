@@ -28,6 +28,8 @@ public class Film {
     Long likes;
     @With
     Set<Genre> genres;
+    @With
+    @NotNull(message = "Рейтинг не может быть пустым")
     RatingMpa mpa;
 
     public Film(Long id, String name, String description, LocalDate releaseDate, int duration,

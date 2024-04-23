@@ -3,11 +3,9 @@ package ru.yandex.practicum.filmorate.dao.impl;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StopWatch;
 import ru.yandex.practicum.filmorate.dao.GenreStorage;
 import ru.yandex.practicum.filmorate.dao.mapper.ModelMapper;
 import ru.yandex.practicum.filmorate.exception.GenreException;
@@ -16,10 +14,10 @@ import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Repository
@@ -50,12 +48,12 @@ public class GenreDbStorage implements GenreStorage {
     }
 
     @Override
-    public List<Genre> getFilmGenres(Long filmId) {
+    public Set<Genre> getFilmGenres(Long filmId) {
         log.debug("Запрос получить список жанров фильма с id {}", filmId);
 
         String sql = "SELECT * FROM genres WHERE id IN "
                 + "(SELECT genre_id FROM film_genres WHERE film_id = ?)";
-        return jdbcTemplate.query(sql, mapper::makeGenre, filmId);
+        return new HashSet<>(jdbcTemplate.query(sql, mapper::makeGenre, filmId));
     }
 
     @Override
@@ -91,13 +89,19 @@ public class GenreDbStorage implements GenreStorage {
         return addFilmGenres(filmId, genres);
     }
 
+    //TODO: довести до ума
     @Override
-    public void checkGenreId(Integer genreId) {
-        log.debug("Запрос проверить id {} жанра.", genreId);
+    public void checkGenres(Set<Genre> genres) {
+        log.debug("Запрос проверить наличие жанров.");
 
-        String sql = "SELECT * FROM genres WHERE id = ?";
-        List<Genre> genre = jdbcTemplate.query(sql, mapper::makeGenre, genreId);
-        if (genre.isEmpty()) {
+        String sql = "SELECT id FROM genres";
+        List<Integer> genreDbIdList = jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt("id"));
+        List<Integer> genreIdList = genres.stream()
+                .map(Genre::getId)
+                .collect(Collectors.toList());
+        if (!genreDbIdList.containsAll(genreIdList)) {
+            genreDbIdList.forEach(genreIdList::remove);
+            Integer genreId = genreIdList.stream().findFirst().get();
             log.error("Жанра с id {} нет в БД.", genreId);
             throw new GenreException(String.format("Неверно указан id (%d) жанра.",  genreId));
         }

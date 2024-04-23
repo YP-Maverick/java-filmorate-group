@@ -23,7 +23,7 @@ public class RatingMpaDbStorage implements RatingMpaStorage {
 
     @Override
     public RatingMpa getRatingById(int id) {
-        log.debug("Запорс получить рейтинг MPA по id {}.", id);
+        log.debug("Запрос получить рейтинг MPA по id {}.", id);
 
         String sql = "SELECT * FROM rating_MPA WHERE id = ?";
         List<RatingMpa> rating = jdbcTemplate.query(sql, mapper::makeRatingMpa, id);
@@ -35,7 +35,7 @@ public class RatingMpaDbStorage implements RatingMpaStorage {
 
     @Override
     public List<RatingMpa> getAllRatings() {
-        log.debug("Запорс получить список рейтингов MPA.");
+        log.debug("Запрос получить список рейтингов MPA.");
 
         String sql = "SELECT * FROM rating_MPA GROUP BY id";
         return jdbcTemplate.query(sql, mapper::makeRatingMpa);
@@ -43,7 +43,7 @@ public class RatingMpaDbStorage implements RatingMpaStorage {
 
     @Override
     public void checkRatingId(Integer id) {
-        log.debug("Запорс проверить id {} рейтинга MPA.", id);
+        log.debug("Запрос проверить id {} рейтинга MPA.", id);
 
         String sql = "SELECT * FROM rating_MPA WHERE id = ?";
         List<RatingMpa> rating = jdbcTemplate.query(sql, mapper::makeRatingMpa, id);
@@ -51,5 +51,14 @@ public class RatingMpaDbStorage implements RatingMpaStorage {
             log.error("Рейтинга MPA с id {} нет в БД.", id);
             throw new RatingException(String.format("Неверно указан id (%d) рейтинга MPA.", id));
         }
+    }
+
+    @Override
+    public RatingMpa getFilmRating(Long filmId) {
+        log.debug("Запрос получить рейтинг MPA по id фильма {}.", filmId);
+
+        String sql = "SELECT * FROM rating_MPA WHERE id IN "
+                + "(SELECT rating_id FROM films WHERE id = ?)";
+        return jdbcTemplate.query(sql, mapper::makeRatingMpa, filmId).get(0);
     }
 }

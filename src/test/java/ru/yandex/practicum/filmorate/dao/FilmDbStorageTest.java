@@ -79,8 +79,8 @@ public class FilmDbStorageTest {
         GenreStorage genreStorage = new GenreDbStorage(jdbcTemplate, modelMapper);
         RatingMpaStorage ratingMpaStorage = new RatingMpaDbStorage(jdbcTemplate, modelMapper);
         userStorage = new UserDbStorage(jdbcTemplate, modelMapper);
-        filmStorage = new FilmDbStorage(jdbcTemplate, genreStorage,
-                ratingMpaStorage, userStorage);
+        filmStorage = new FilmDbStorage(jdbcTemplate, genreStorage
+                /*ratingMpaStorage*/);
     }
 
     @Test

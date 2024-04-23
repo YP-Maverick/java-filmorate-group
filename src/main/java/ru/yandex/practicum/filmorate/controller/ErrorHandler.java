@@ -47,7 +47,7 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleGenreExc(final GenreException e) {
         log(e);
-        return Map.of("error", "Like error",
+        return Map.of("error", "Error with genre",
                 "errorMessage", e.getMessage());
     }
 
@@ -55,7 +55,7 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleRatingExc(final RatingException e) {
         log(e);
-        return Map.of("error", "Like error",
+        return Map.of("error", "Error with MPA",
                 "errorMessage", e.getMessage());
     }
 }
