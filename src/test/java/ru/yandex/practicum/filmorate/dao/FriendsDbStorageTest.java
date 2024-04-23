@@ -46,7 +46,7 @@ public class FriendsDbStorageTest {
     @BeforeEach
     public void beforeEach() {
         userStorage = new UserDbStorage(jdbcTemplate, mapper);
-        friendsStorage = new FriendsDbStorage(jdbcTemplate, userStorage, mapper);
+        //friendsStorage = new FriendsDbStorage(jdbcTemplate, userStorage, mapper);
     }
 
     @Test

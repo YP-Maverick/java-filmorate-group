@@ -7,9 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.FriendsStorage;
 import ru.yandex.practicum.filmorate.dao.mapper.ModelMapper;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.List;
 
@@ -19,21 +17,10 @@ import java.util.List;
 @Slf4j
 public class FriendsDbStorage implements FriendsStorage {
     private final JdbcTemplate jdbcTemplate;
-    private final UserStorage userStorage;
     private final ModelMapper mapper;
-
-    private void checkId(Long userId) {
-        if (!userStorage.contains(userId)) {
-            log.error("Неверно указан id {}.", userId);
-            throw new NotFoundException(String.format("Пользователя с id %d не существует.",  userId));
-        }
-    }
 
     @Override
     public void addFriend(Long userId, Long friendId) {
-        checkId(userId);
-        checkId(friendId);
-
         log.debug("Запрос от id {} добавить в друзья id {}.", userId, friendId);
 
         String sql = "INSERT INTO friends(user_id, friend_id, status) VALUES (?, ?, ?)";
@@ -42,9 +29,6 @@ public class FriendsDbStorage implements FriendsStorage {
 
     @Override
     public long deleteFriend(Long userId, Long friendId) {
-        checkId(userId);
-        checkId(friendId);
-
         log.debug("Запрос от id {} удалить из друзей id {}.", userId, friendId);
 
         String sql = "DELETE FROM friends WHERE user_id = ? AND friend_id =?";
@@ -55,8 +39,6 @@ public class FriendsDbStorage implements FriendsStorage {
 
     @Override
     public List<User> getAllFriends(Long id) {
-        checkId(id);
-
         log.debug("Запрос от id {} получить список друзей.", id);
 
         String sql = "SELECT * FROM users "
