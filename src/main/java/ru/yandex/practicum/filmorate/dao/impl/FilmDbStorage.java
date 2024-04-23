@@ -18,6 +18,8 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @AllArgsConstructor
@@ -39,7 +41,7 @@ public class FilmDbStorage implements FilmStorage {
                 .releaseDate(rs.getDate("release_Date").toLocalDate())
                 .duration(rs.getInt("duration"))
                 .likes(rs.getLong("likes"))
-                .genres(genreStorage.getFilmGenres(rs.getLong("id")))
+                .genres(new HashSet<>(genreStorage.getFilmGenres(rs.getLong("id"))))
                 .mpa(ratingMpaStorage.getRatingById(rs.getInt("rating_id")))
                 .build();
     }
@@ -59,10 +61,10 @@ public class FilmDbStorage implements FilmStorage {
                 .usingGeneratedKeyColumns("id");
         Long filmId = simpleJdbcInsert.executeAndReturnKey(film.toMap()).longValue();
 
-        List<Genre> genres = film.getGenres();
+        List<Genre> genres = new ArrayList<>(film.getGenres());
         if (!genres.isEmpty()) {
             genres = genreStorage.addFilmGenres(filmId, genres);
-            return film.withId(filmId).withGenres(genres);
+            return film.withId(filmId).withGenres(new HashSet<>(genres));
         }
         return film.withId(filmId);
     }
@@ -104,9 +106,9 @@ public class FilmDbStorage implements FilmStorage {
             log.error("Запрос обновить несуществующий фильм с id {}.", film.getId());
             throw new NotFoundException(String.format("Фильма с id %d не существует.", film.getId()));
         } else {
-            List<Genre> genres = film.getGenres();
+            List<Genre> genres = new ArrayList<>(film.getGenres());
             genres = genreStorage.updateFilmGenres(film.getId(), genres);
-            return film.withGenres(genres);
+            return film.withGenres(new HashSet<>(genres));
         }
     }
 
@@ -122,7 +124,7 @@ public class FilmDbStorage implements FilmStorage {
         } else {
             Film film = films.get(0);
             List<Genre> genres = genreStorage.getFilmGenres(film.getId());
-            return film.withGenres(genres);
+            return film.withGenres(new HashSet<>(genres));
         }
     }
 

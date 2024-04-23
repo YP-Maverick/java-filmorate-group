@@ -27,18 +27,18 @@ public class Film {
     @PositiveOrZero
     Long likes;
     @With
-    List<Genre> genres;
+    Set<Genre> genres;
     RatingMpa mpa;
 
     public Film(Long id, String name, String description, LocalDate releaseDate, int duration,
-                Long likes, List<Genre> genres, RatingMpa mpa) {
+                Long likes, Set<Genre> genres, RatingMpa mpa) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
         this.likes = likes;
-        this.genres = (genres == null) ? new ArrayList<>() : genres;
+        this.genres = (genres == null) ? new HashSet<>() : genres;
         this.mpa = mpa;
     }
 

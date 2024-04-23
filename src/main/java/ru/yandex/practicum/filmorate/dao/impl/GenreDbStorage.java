@@ -17,7 +17,9 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @Repository
@@ -62,9 +64,6 @@ public class GenreDbStorage implements GenreStorage {
 
         String sql = "INSERT INTO film_genres (film_id, genre_id)"
                 + "VALUES (?, ?)";
-        List<Genre> genresToBeRemoved = new ArrayList<>();
-
-        // Попытка ввести batchUpdate()
         jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -77,15 +76,6 @@ public class GenreDbStorage implements GenreStorage {
                 return genres.size();
             }
         });
-
-        /*for (Genre genre : genres) {
-            try {
-                jdbcTemplate.update(sql, filmId, genre.getId());
-            } catch (DuplicateKeyException e) {
-                genresToBeRemoved.add(genre);
-            }
-        }*/
-        genres.removeAll(genresToBeRemoved);
         return genres;
     }
 
