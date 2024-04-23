@@ -48,7 +48,8 @@ public class FilmControllerTest {
     @Test
     public void createFilm() throws Exception {
         film = Film.builder()
-                .name("film_name").description("film_descr")
+                .name("film_name")
+                .description("film_descr")
                 .releaseDate(LocalDate.parse("2000-02-02"))
                 .duration(90)
                 .mpa(RatingMpa.builder()
@@ -83,6 +84,9 @@ public class FilmControllerTest {
                 .description("film_descr")
                 .releaseDate(LocalDate.parse("2000-02-02"))
                 .duration(90)
+                .mpa(RatingMpa.builder()
+                        .id(1)
+                        .build())
                 .build();
 
         Set<ConstraintViolation<Film>> blankViol = validator.validate(film);
@@ -102,6 +106,9 @@ public class FilmControllerTest {
                 .description("film_descr")
                 .releaseDate(LocalDate.parse("2000-02-02"))
                 .duration(90)
+                .mpa(RatingMpa.builder()
+                        .id(1)
+                        .build())
                 .build();
 
         Set<ConstraintViolation<Film>> nullViol = validator.validate(film);
@@ -120,6 +127,9 @@ public class FilmControllerTest {
                 .description("1".repeat(201))
                 .releaseDate(LocalDate.parse("2000-02-02"))
                 .duration(90)
+                .mpa(RatingMpa.builder()
+                        .id(1)
+                        .build())
                 .build();
 
         Set<ConstraintViolation<Film>> violation = validator.validate(film);
@@ -139,6 +149,9 @@ public class FilmControllerTest {
                 .description("film_descr")
                 .releaseDate(LocalDate.parse("1895-12-28"))
                 .duration(90)
+                .mpa(RatingMpa.builder()
+                        .id(1)
+                        .build())
                 .build();
 
         Set<ConstraintViolation<Film>> violation = validator.validate(film);
@@ -151,6 +164,9 @@ public class FilmControllerTest {
                 .description("film_descr")
                 .releaseDate(LocalDate.parse("1895-12-27"))
                 .duration(90)
+                .mpa(RatingMpa.builder()
+                        .id(1)
+                        .build())
                 .build();
 
         Set<ConstraintViolation<Film>> afterViol = validator.validate(newFilm);
@@ -170,6 +186,9 @@ public class FilmControllerTest {
                 .description("film_descr")
                 .releaseDate(LocalDate.parse("2000-02-02"))
                 .duration(0)
+                .mpa(RatingMpa.builder()
+                        .id(1)
+                        .build())
                 .build();
 
         Set<ConstraintViolation<Film>> violation = validator.validate(film);
@@ -189,6 +208,9 @@ public class FilmControllerTest {
                 .description("film_descr")
                 .releaseDate(LocalDate.parse("2000-02-02"))
                 .duration(-1)
+                .mpa(RatingMpa.builder()
+                        .id(1)
+                        .build())
                 .build();
 
         Set<ConstraintViolation<Film>> negativeViol = validator.validate(film);
