@@ -66,7 +66,8 @@ public class FilmService {
     }
 
     public Film deleteFilm(Long id) {
-        return filmStorage.deleteFilm(id);
+        Set<Genre> genres = genreStorage.getFilmGenres(id);
+        return filmStorage.deleteFilm(id).withGenres(genres);
     }
 
     public Film updateFilm(Film film) {

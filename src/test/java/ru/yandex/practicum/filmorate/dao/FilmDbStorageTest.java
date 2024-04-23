@@ -8,12 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.filmorate.dao.impl.FilmDbStorage;
-import ru.yandex.practicum.filmorate.dao.impl.GenreDbStorage;
-import ru.yandex.practicum.filmorate.dao.impl.RatingMpaDbStorage;
 import ru.yandex.practicum.filmorate.dao.impl.UserDbStorage;
 import ru.yandex.practicum.filmorate.dao.mapper.ModelMapper;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.RatingMpa;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -34,12 +31,6 @@ public class FilmDbStorageTest {
     private static ModelMapper modelMapper;
 
     private Film createFilm() {
-        List<Genre> genres = new ArrayList<>();
-        genres.add(Genre.builder()
-                .id(5)
-                .name("Документальный")
-                .build());
-
         Film film = Film.builder()
                 .id(1L)
                 .name("About Desert")
@@ -47,7 +38,6 @@ public class FilmDbStorageTest {
                 .releaseDate(LocalDate.of(2020, 1, 1))
                 .duration(130)
                 .likes(0L)
-                .genres(genres)
                 .mpa(RatingMpa.builder()
                         .id(2)
                         .name("PG")
@@ -74,21 +64,12 @@ public class FilmDbStorageTest {
 
     @BeforeEach
     public void beforeEach() {
-        GenreStorage genreStorage = new GenreDbStorage(jdbcTemplate, modelMapper);
-        RatingMpaStorage ratingMpaStorage = new RatingMpaDbStorage(jdbcTemplate, modelMapper);
         userStorage = new UserDbStorage(jdbcTemplate, modelMapper);
-        filmStorage = new FilmDbStorage(jdbcTemplate, genreStorage
-                /*ratingMpaStorage*/);
+        filmStorage = new FilmDbStorage(jdbcTemplate, modelMapper);
     }
 
     @Test
     public void testCreateFindFilmByIdAndContains() {
-        List<Genre> genres = new ArrayList<>();
-        genres.add(Genre.builder()
-                .id(5)
-                .name("Документальный")
-                .build());
-
         Film film = Film.builder()
                 .id(1L)
                 .name("About Desert")
@@ -96,7 +77,6 @@ public class FilmDbStorageTest {
                 .releaseDate(LocalDate.of(2020, 1, 1))
                 .duration(130)
                 .likes(0L)
-                .genres(genres)
                 .mpa(RatingMpa.builder()
                         .id(2)
                         .name("PG")
@@ -132,16 +112,6 @@ public class FilmDbStorageTest {
         boolean isFilmExist = filmStorage.contains(film.getId());
         assertTrue(isFilmExist, "Film с id " + film.getId() + " не найден.");
 
-        List<Genre> genres = new ArrayList<>();
-        genres.add(Genre.builder()
-                .id(3)
-                .name("Мультфильм")
-                .build());
-        genres.add(Genre.builder()
-                .id(5)
-                .name("Документальный")
-                .build());
-
         Film toUpdateFilm = Film.builder()
                 .id(film.getId())
                 .name("A Desert")
@@ -149,7 +119,6 @@ public class FilmDbStorageTest {
                 .releaseDate(LocalDate.of(2020, 1, 1))
                 .duration(150)
                 .likes(0L)
-                .genres(genres)
                 .mpa(RatingMpa.builder()
                         .id(1)
                         .name("G")
@@ -180,11 +149,6 @@ public class FilmDbStorageTest {
     public void testFindAllFilms() {
         Film film1 = createFilm();
 
-        List<Genre> genres = new ArrayList<>();
-        genres.add(Genre.builder()
-                .id(3)
-                .name("Мультфильм")
-                .build());
         Film secondFilm = Film.builder()
                 .id(1L)
                 .name("A Desert")
@@ -192,7 +156,6 @@ public class FilmDbStorageTest {
                 .releaseDate(LocalDate.of(2020, 1, 1))
                 .duration(150)
                 .likes(0L)
-                .genres(genres)
                 .mpa(RatingMpa.builder()
                         .id(1)
                         .name("G")

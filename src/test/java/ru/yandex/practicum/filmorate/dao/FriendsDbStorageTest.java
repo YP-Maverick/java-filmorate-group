@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import ru.yandex.practicum.filmorate.dao.impl.FriendsDbStorage;
 import ru.yandex.practicum.filmorate.dao.impl.UserDbStorage;
 import ru.yandex.practicum.filmorate.dao.mapper.ModelMapper;
 import ru.yandex.practicum.filmorate.model.User;
@@ -44,7 +45,7 @@ public class FriendsDbStorageTest {
     @BeforeEach
     public void beforeEach() {
         userStorage = new UserDbStorage(jdbcTemplate, mapper);
-        //friendsStorage = new FriendsDbStorage(jdbcTemplate, userStorage, mapper);
+        friendsStorage = new FriendsDbStorage(jdbcTemplate, mapper);
     }
 
     @Test

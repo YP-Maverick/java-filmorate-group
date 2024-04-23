@@ -9,8 +9,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.filmorate.dao.impl.FilmDbStorage;
 import ru.yandex.practicum.filmorate.dao.impl.GenreDbStorage;
-import ru.yandex.practicum.filmorate.dao.impl.RatingMpaDbStorage;
-import ru.yandex.practicum.filmorate.dao.impl.UserDbStorage;
 import ru.yandex.practicum.filmorate.dao.mapper.ModelMapper;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -18,7 +16,9 @@ import ru.yandex.practicum.filmorate.model.RatingMpa;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -39,17 +39,11 @@ public class GenreDbStorageTest {
     @BeforeEach
     public void beforeEach() {
         genreStorage = new GenreDbStorage(jdbcTemplate, modelMapper);
-        UserStorage userStorage = new UserDbStorage(jdbcTemplate, modelMapper);
-        RatingMpaStorage ratingMpaStorage = new RatingMpaDbStorage(jdbcTemplate, modelMapper);
-        filmStorage = new FilmDbStorage(jdbcTemplate, genreStorage
-                /*ratingMpaStorage*/);
+        filmStorage = new FilmDbStorage(jdbcTemplate, modelMapper);
     }
 
     @Test
     public void testGetByIdAndGetAll() {
-        // Проверка метода checkGenres()
-        //genreStorage.checkGenres(1);
-
         Genre genre = Genre.builder()
                 .id(1)
                 .name("Комедия")
@@ -93,6 +87,9 @@ public class GenreDbStorageTest {
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(genres);
+
+        // Проверка метода checkGenres()
+        genreStorage.checkGenres(new HashSet<>(genres));
     }
 
     @Test
@@ -111,7 +108,7 @@ public class GenreDbStorageTest {
                 .build();
         Film newfilm = filmStorage.create(film);
 
-        List<Genre> genres = new ArrayList<>();
+        Set<Genre> genres = new HashSet<>();
         genres.add(Genre.builder()
                 .id(1)
                 .name("Комедия")
@@ -122,20 +119,20 @@ public class GenreDbStorageTest {
                 .build());
 
         // Проверка метода addFilmGenres()
-        List<Genre> savedGenres = genreStorage.addFilmGenres(newfilm.getId(), genres);
+        Set<Genre> savedGenres = genreStorage.addFilmGenres(newfilm.getId(), genres);
         assertThat(savedGenres)
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(genres);
 
         // Проверка метода getFilmGenres()
-        List<Genre> filmGenres = genreStorage.getFilmGenres(newfilm.getId());
+        Set<Genre> filmGenres = genreStorage.getFilmGenres(newfilm.getId());
         assertThat(filmGenres)
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(genres);
 
-        List<Genre> toUpdateGenres = new ArrayList<>();
+        Set<Genre> toUpdateGenres = new HashSet<>();
         genres.add(Genre.builder()
                 .id(2)
                 .name("Драма")
@@ -146,13 +143,13 @@ public class GenreDbStorageTest {
                 .build());
 
         // Проверка метода updateFilmGenres()
-        List<Genre> updatedGenres = genreStorage.updateFilmGenres(newfilm.getId(), toUpdateGenres);
+        Set<Genre> updatedGenres = genreStorage.updateFilmGenres(newfilm.getId(), toUpdateGenres);
         assertThat(updatedGenres)
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(toUpdateGenres);
 
-        List<Genre> newFilmGenres = genreStorage.getFilmGenres(newfilm.getId());
+        Set<Genre> newFilmGenres = genreStorage.getFilmGenres(newfilm.getId());
         assertThat(newFilmGenres)
                 .isNotNull()
                 .usingRecursiveComparison()
