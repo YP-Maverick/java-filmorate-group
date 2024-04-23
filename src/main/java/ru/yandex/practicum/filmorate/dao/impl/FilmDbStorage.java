@@ -7,16 +7,12 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.dao.GenreStorage;
 import ru.yandex.practicum.filmorate.dao.mapper.ModelMapper;
 import ru.yandex.practicum.filmorate.exception.LikeException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 @AllArgsConstructor
@@ -25,7 +21,6 @@ import java.util.List;
 @Slf4j
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
-    private final GenreStorage genreStorage;
     private final ModelMapper mapper;
 
     @Override
@@ -36,12 +31,6 @@ public class FilmDbStorage implements FilmStorage {
                 .withTableName("films")
                 .usingGeneratedKeyColumns("id");
         Long filmId = simpleJdbcInsert.executeAndReturnKey(film.toMap()).longValue();
-
-        List<Genre> genres = new ArrayList<>(film.getGenres());
-        if (!genres.isEmpty()) {
-            genres = genreStorage.addFilmGenres(filmId, genres);
-            return film.withId(filmId).withGenres(new HashSet<>(genres));
-        }
         return film.withId(filmId);
     }
 
@@ -75,11 +64,7 @@ public class FilmDbStorage implements FilmStorage {
         if (row != 1) {
             log.error("Запрос обновить несуществующий фильм с id {}.", film.getId());
             throw new NotFoundException(String.format("Фильма с id %d не существует.", film.getId()));
-        } else {
-            List<Genre> genres = new ArrayList<>(film.getGenres());
-            genres = genreStorage.updateFilmGenres(film.getId(), genres);
-            return film.withGenres(new HashSet<>(genres));
-        }
+        } else return film;
     }
 
     @Override

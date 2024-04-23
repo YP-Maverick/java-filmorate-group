@@ -45,7 +45,14 @@ public class FilmService {
     }
 
     public List<Film> getTopFilms(Integer count) {
-        return filmStorage.getTopFilms(count);
+        List<Film> filmsWithoutGenres = filmStorage.getTopFilms(count);
+        List<Film> filmsWithGenres = new ArrayList<>();
+        for (Film film : filmsWithoutGenres) {
+            Set<Genre> genres = genreStorage.getFilmGenres(film.getId());
+            Film correctFilm = film.withGenres(genres);
+            filmsWithGenres.add(correctFilm);
+        }
+        return filmsWithGenres;
     }
 
     public Film createFilm(Film film) {
@@ -53,7 +60,9 @@ public class FilmService {
         genreStorage.checkGenres(film.getGenres());
         ratingMpaStorage.checkRatingId(film.getMpa().getId());
 
-        return filmStorage.create(film);
+        Film newFilm = filmStorage.create(film);
+        genreStorage.addFilmGenres(newFilm.getId(), new ArrayList<>(film.getGenres()));
+        return newFilm;
     }
 
     public Film deleteFilm(Long id) {
@@ -65,11 +74,20 @@ public class FilmService {
         genreStorage.checkGenres(film.getGenres());
         ratingMpaStorage.checkRatingId(film.getMpa().getId());
 
-        return filmStorage.updateFilm(film);
+        Film updatedFilm =  filmStorage.updateFilm(film);
+        genreStorage.updateFilmGenres(film.getId(), new ArrayList<>(film.getGenres()));
+        return updatedFilm;
     }
 
     public List<Film> findAllFilms() {
-        return filmStorage.findAllFilms();
+        List<Film> filmsWithoutGenres =  filmStorage.findAllFilms();
+        List<Film> filmsWithGenres = new ArrayList<>();
+        for (Film film : filmsWithoutGenres) {
+            Set<Genre> genres = genreStorage.getFilmGenres(film.getId());
+            Film correctFilm = film.withGenres(genres);
+            filmsWithGenres.add(correctFilm);
+        }
+        return filmsWithGenres;
     }
 
     public Film getFilmById(Long id) {
