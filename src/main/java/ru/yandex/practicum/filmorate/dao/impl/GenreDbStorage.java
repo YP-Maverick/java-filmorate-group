@@ -4,14 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StopWatch;
 import ru.yandex.practicum.filmorate.dao.GenreStorage;
 import ru.yandex.practicum.filmorate.dao.mapper.ModelMapper;
 import ru.yandex.practicum.filmorate.exception.GenreException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,13 +63,28 @@ public class GenreDbStorage implements GenreStorage {
         String sql = "INSERT INTO film_genres (film_id, genre_id)"
                 + "VALUES (?, ?)";
         List<Genre> genresToBeRemoved = new ArrayList<>();
-        for (Genre genre : genres) {
+
+        // Попытка ввести batchUpdate()
+        jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setLong(1, filmId);
+                ps.setLong(2, genres.get(i).getId());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return genres.size();
+            }
+        });
+
+        /*for (Genre genre : genres) {
             try {
                 jdbcTemplate.update(sql, filmId, genre.getId());
             } catch (DuplicateKeyException e) {
                 genresToBeRemoved.add(genre);
             }
-        }
+        }*/
         genres.removeAll(genresToBeRemoved);
         return genres;
     }
