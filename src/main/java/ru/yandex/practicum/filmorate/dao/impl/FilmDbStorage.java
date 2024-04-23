@@ -30,7 +30,6 @@ public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final GenreStorage genreStorage;
     private final RatingMpaStorage ratingMpaStorage;
-    private final UserStorage userStorage;
 
     // Не в ModelMapper.java, чтобы избежать зацикливания с GenreStorage и RatingMpaStorage
     private Film makeFilm(ResultSet rs, int rowNum) throws SQLException {
@@ -149,10 +148,6 @@ public class FilmDbStorage implements FilmStorage {
     public void addLike(Long filmId, Long userId) {
         log.debug("Запрос пользователя с id {} добавить лайк фильму с id {}.", userId, filmId);
 
-        // Проверка наличия фильма и пользователя
-        getFilmById(filmId);
-        userStorage.getUserById(userId);
-
         String sql = "INSERT INTO film_likes (film_id, user_id) VALUES (?, ?)";
         try {
             jdbcTemplate.update(sql, filmId, userId);
@@ -168,10 +163,6 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public void deleteLike(Long filmId, Long userId) {
         log.debug("Запрос пользователя с id {} удалить лайк у фильма с id {}.", userId, filmId);
-
-        // Проверка наличия фильма и пользователя
-        getFilmById(filmId);
-        userStorage.getUserById(userId);
 
         String sql = "DELETE FROM film_likes WHERE film_id = ? AND user_id = ? ";
         int row = jdbcTemplate.update(sql, filmId, userId);

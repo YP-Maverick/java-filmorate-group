@@ -19,7 +19,7 @@ public class UserService {
 
     private void checkId(Long userId) {
         if (!userStorage.contains(userId)) {
-            log.error("Неверно указан id {}.", userId);
+            log.error("Неверно указан id пользователя: {}.", userId);
             throw new NotFoundException(String.format("Пользователя с id %d не существует.",  userId));
         }
     }
