@@ -14,9 +14,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -57,28 +55,29 @@ public class GenreDbStorage implements GenreStorage {
     }
 
     @Override
-    public List<Genre> addFilmGenres(Long filmId, List<Genre> genres) {
+    public Set<Genre> addFilmGenres(Long filmId, Set<Genre> genres) {
         log.debug("Запрос добавить жанры фильма с id {}", filmId);
 
+        List<Genre> filmGenres = new ArrayList<>(genres);
         String sql = "INSERT INTO film_genres (film_id, genre_id)"
                 + "VALUES (?, ?)";
         jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 ps.setLong(1, filmId);
-                ps.setLong(2, genres.get(i).getId());
+                ps.setLong(2, filmGenres.get(i).getId());
             }
 
             @Override
             public int getBatchSize() {
-                return genres.size();
+                return filmGenres.size();
             }
         });
         return genres;
     }
 
     @Override
-    public List<Genre> updateFilmGenres(Long filmId, List<Genre> genres) {
+    public Set<Genre> updateFilmGenres(Long filmId, Set<Genre> genres) {
         log.debug("Запрос обновить список жанров фильма с id {}", filmId);
 
         // Удаление прежнего списка жанров
@@ -89,17 +88,18 @@ public class GenreDbStorage implements GenreStorage {
         return addFilmGenres(filmId, genres);
     }
 
-    //TODO: довести до ума
     @Override
     public void checkGenres(Set<Genre> genres) {
         log.debug("Запрос проверить наличие жанров.");
 
-        String sql = "SELECT id FROM genres";
-        List<Integer> genreDbIdList = jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt("id"));
         List<Integer> genreIdList = genres.stream()
                 .map(Genre::getId)
                 .collect(Collectors.toList());
-        if (!genreDbIdList.containsAll(genreIdList)) {
+        String inSql = String.join(",", Collections.nCopies(genreIdList.size(), "?"));
+
+        List<Integer> genreDbIdList = jdbcTemplate.query(String.format("SELECT id FROM genres WHERE id IN (%s)", inSql),
+                genreIdList.toArray(), (rs, rowNum) -> rs.getInt("id"));
+        if (genreDbIdList.size() < genreIdList.size()) {
             genreDbIdList.forEach(genreIdList::remove);
             Integer genreId = genreIdList.stream().findFirst().get();
             log.error("Жанра с id {} нет в БД.", genreId);

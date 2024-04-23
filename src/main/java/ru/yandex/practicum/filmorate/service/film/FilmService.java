@@ -8,8 +8,8 @@ import ru.yandex.practicum.filmorate.dao.RatingMpaStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.dao.FilmStorage;
+import ru.yandex.practicum.filmorate.dao.UserStorage;
 
 import java.util.*;
 
@@ -61,7 +61,7 @@ public class FilmService {
         ratingMpaStorage.checkRatingId(film.getMpa().getId());
 
         Film newFilm = filmStorage.create(film);
-        genreStorage.addFilmGenres(newFilm.getId(), new ArrayList<>(film.getGenres()));
+        genreStorage.addFilmGenres(newFilm.getId(), film.getGenres());
         return newFilm;
     }
 
@@ -75,7 +75,7 @@ public class FilmService {
         ratingMpaStorage.checkRatingId(film.getMpa().getId());
 
         Film updatedFilm =  filmStorage.updateFilm(film);
-        genreStorage.updateFilmGenres(film.getId(), new ArrayList<>(film.getGenres()));
+        genreStorage.updateFilmGenres(film.getId(), film.getGenres());
         return updatedFilm;
     }
 
