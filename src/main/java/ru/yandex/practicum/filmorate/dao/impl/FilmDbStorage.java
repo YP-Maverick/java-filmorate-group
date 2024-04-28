@@ -132,15 +132,24 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getTopFilms(Integer count) {
+    public List<Film> getTopFilms(Integer count, String year) {
         log.debug("Получен запрос вывести список популярных фильмов");
 
-        long size = (count == null || count <= 0) ? 10L : count;
-        String sql = "SELECT f.*, "
-                + "rm.name AS rating_name "
-                + "FROM films f "
-                + "JOIN rating_MPA rm ON rm.ID = f.rating_id "
-                + "ORDER BY likes DESC LIMIT ?";
-        return jdbcTemplate.query(sql, mapper::makeFilm, size);
+        if (year == null) {
+            String sql = "SELECT f.*, "
+                    + "rm.name AS rating_name "
+                    + "FROM films f "
+                    + "JOIN rating_MPA rm ON rm.ID = f.rating_id "
+                    + "ORDER BY likes DESC LIMIT ?";
+            return jdbcTemplate.query(sql, mapper::makeFilm, count);
+        } else {
+            String sql = "SELECT f.*, "
+                    + "rm.name AS rating_name "
+                    + "FROM films f "
+                    + "JOIN rating_MPA rm ON rm.ID = f.rating_id "
+                    + "WHERE YEAR(f.release_date) = ?"
+                    + "ORDER BY likes DESC LIMIT ?";
+            return jdbcTemplate.query(sql, mapper::makeFilm, Integer.parseInt(year), count);
+        }
     }
 }

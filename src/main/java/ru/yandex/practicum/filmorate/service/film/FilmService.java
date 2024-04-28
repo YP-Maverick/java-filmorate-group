@@ -3,15 +3,18 @@ package ru.yandex.practicum.filmorate.service.film;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.FilmStorage;
 import ru.yandex.practicum.filmorate.dao.GenreStorage;
 import ru.yandex.practicum.filmorate.dao.RatingMpaStorage;
+import ru.yandex.practicum.filmorate.dao.UserStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.dao.FilmStorage;
-import ru.yandex.practicum.filmorate.dao.UserStorage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @Service
@@ -44,15 +47,15 @@ public class FilmService {
         filmStorage.deleteLike(filmId, userId);
     }
 
-    public List<Film> getTopFilms(Integer count) {
-        List<Film> filmsWithoutGenres = filmStorage.getTopFilms(count);
-        List<Film> filmsWithGenres = new ArrayList<>();
-        for (Film film : filmsWithoutGenres) {
-            Set<Genre> genres = genreStorage.getFilmGenres(film.getId());
-            Film correctFilm = film.withGenres(genres);
-            filmsWithGenres.add(correctFilm);
-        }
-        return filmsWithGenres;
+    public List<Film> getTopFilms(Integer count, Integer genreId, String year) {
+            List<Film> filmsWithoutGenres = filmStorage.getTopFilms(count, year);
+            List<Film> filmsWithGenres = new ArrayList<>();
+            for (Film film : filmsWithoutGenres) {
+                Set<Genre> genres = genreStorage.getFilmGenres(film.getId());
+                Film correctFilm = film.withGenres(genres);
+                filmsWithGenres.add(correctFilm);
+            }
+            return filmsWithGenres;
     }
 
     public Film createFilm(Film film) {
