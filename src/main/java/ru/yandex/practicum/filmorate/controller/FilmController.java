@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/films")
 @RequiredArgsConstructor
+@Validated
 public class FilmController {
     private final FilmService filmService;
 
@@ -54,9 +56,12 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public List<Film> getTopFilms(@RequestParam(required = false, defaultValue = "10") @Positive Integer count,
-                                  @RequestParam(required = false) @Positive Integer genreId,
-                                  @RequestParam(required = false) @Pattern(regexp = "^\\d{4}$") String year) {
+    public List<Film> getTopFilms(@RequestParam(required = false, defaultValue = "10")
+                                  @Positive(message = "Параметр count должен быть положительным") Integer count,
+                                  @RequestParam(required = false)
+                                  @Positive(message = "Параметр genreId должен быть положительным") Integer genreId,
+                                  @RequestParam(required = false)
+                                  @Pattern(regexp = "^\\d{4}$", message = "Параметр year указан некорректно") String year) {
         return filmService.getTopFilms(count, genreId, year);
     }
 }
