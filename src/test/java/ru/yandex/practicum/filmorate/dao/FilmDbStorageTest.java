@@ -233,11 +233,16 @@ public class FilmDbStorageTest {
         shouldTopFilmsList.add(film3WithLike);
 
         // Проверка метода getTopFilms()
-        List<Film> topFilms = filmStorage.getTopFilms(3);
+        List<Film> topFilms = filmStorage.getTopFilms(3, "2020");
+        List<Film> incorrectTopFilms = filmStorage.getTopFilms(3, "1990");
+        List<Film> emptyList = new ArrayList<>();
 
         assertThat(topFilms)
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(shouldTopFilmsList);
+
+        assertThat(incorrectTopFilms)
+                .isEqualTo(emptyList);
     }
 }
