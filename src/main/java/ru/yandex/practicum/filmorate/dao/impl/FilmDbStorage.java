@@ -155,7 +155,7 @@ public class FilmDbStorage implements FilmStorage {
             return jdbcTemplate.query(nonStrictSql, mapper::makeFilm, year, genreId, count);
         } else {
             String strictSql = String.format(baseSql, "AND");
-            return jdbcTemplate.query(strictSql, mapper::makeFilm, Integer.parseInt(year), genreId, count);
+            return jdbcTemplate.query(strictSql, mapper::makeFilm, year, genreId, count);
         }
     }
 }
