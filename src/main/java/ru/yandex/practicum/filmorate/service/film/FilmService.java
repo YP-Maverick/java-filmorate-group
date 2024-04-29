@@ -3,15 +3,17 @@ package ru.yandex.practicum.filmorate.service.film;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.FilmStorage;
 import ru.yandex.practicum.filmorate.dao.GenreStorage;
 import ru.yandex.practicum.filmorate.dao.RatingMpaStorage;
+import ru.yandex.practicum.filmorate.dao.UserStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.dao.FilmStorage;
-import ru.yandex.practicum.filmorate.dao.UserStorage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @Service
@@ -25,10 +27,10 @@ public class FilmService {
     private void checkFilmAndUserId(Long filmId, Long userId) {
         if (!filmStorage.contains(filmId)) {
             log.error("Неверно указан id фильма: {}.", filmId);
-            throw new NotFoundException(String.format("Фильма с id %d не существует.",  filmId));
+            throw new NotFoundException(String.format("Фильма с id %d не существует.", filmId));
         } else if (!userStorage.contains(userId)) {
             log.error("Неверно указан id пользователя: {}.", userId);
-            throw new NotFoundException(String.format("Пользователя с id %d не существует.",  userId));
+            throw new NotFoundException(String.format("Пользователя с id %d не существует.", userId));
         }
     }
 
@@ -44,8 +46,8 @@ public class FilmService {
         filmStorage.deleteLike(filmId, userId);
     }
 
-    public List<Film> getTopFilms(Integer count) {
-        List<Film> filmsWithoutGenres = filmStorage.getTopFilms(count);
+    public List<Film> getTopFilms(Integer count, Integer genreId, String year) {
+        List<Film> filmsWithoutGenres = filmStorage.getTopFilms(count, genreId, year);
         List<Film> filmsWithGenres = new ArrayList<>();
         for (Film film : filmsWithoutGenres) {
             Set<Genre> genres = genreStorage.getFilmGenres(film.getId());
@@ -75,13 +77,13 @@ public class FilmService {
         genreStorage.checkGenres(film.getGenres());
         ratingMpaStorage.checkRatingId(film.getMpa().getId());
 
-        Film updatedFilm =  filmStorage.updateFilm(film);
+        Film updatedFilm = filmStorage.updateFilm(film);
         genreStorage.updateFilmGenres(film.getId(), film.getGenres());
         return updatedFilm;
     }
 
     public List<Film> findAllFilms() {
-        List<Film> filmsWithoutGenres =  filmStorage.findAllFilms();
+        List<Film> filmsWithoutGenres = filmStorage.findAllFilms();
         List<Film> filmsWithGenres = new ArrayList<>();
         for (Film film : filmsWithoutGenres) {
             Set<Genre> genres = genreStorage.getFilmGenres(film.getId());
