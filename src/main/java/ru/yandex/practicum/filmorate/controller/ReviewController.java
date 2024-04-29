@@ -34,8 +34,8 @@ public class ReviewController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public void addLike(@PathVariable Long reviewId, @PathVariable Long userId) {
-        reviewService.addLike(reviewId, userId);
+    public void addLike(@PathVariable Long id, @PathVariable Long userId) {
+        reviewService.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
@@ -44,13 +44,13 @@ public class ReviewController {
     }
 
     @PutMapping("/{id}/dislike/{userId}")
-    public void addDislike(@PathVariable Long reviewId, @PathVariable Long userId) {
-        reviewService.addDislike(reviewId, userId);
+    public void addDislike(@PathVariable Long id, @PathVariable Long userId) {
+        reviewService.addDislike(id, userId);
     }
 
     @DeleteMapping("/{id}/dislike/{userId}")
-    public void deleteDislike(@PathVariable Long reviewId, @PathVariable Long userId) {
-        reviewService.deleteDislike(reviewId, userId);
+    public void deleteDislike(@PathVariable Long id, @PathVariable Long userId) {
+        reviewService.deleteDislike(id, userId);
     }
 
 }
