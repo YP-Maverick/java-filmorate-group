@@ -27,10 +27,10 @@ public class FilmService {
     private void checkFilmAndUserId(Long filmId, Long userId) {
         if (!filmStorage.contains(filmId)) {
             log.error("Неверно указан id фильма: {}.", filmId);
-            throw new NotFoundException(String.format("Фильма с id %d не существует.",  filmId));
+            throw new NotFoundException(String.format("Фильма с id %d не существует.", filmId));
         } else if (!userStorage.contains(userId)) {
             log.error("Неверно указан id пользователя: {}.", userId);
-            throw new NotFoundException(String.format("Пользователя с id %d не существует.",  userId));
+            throw new NotFoundException(String.format("Пользователя с id %d не существует.", userId));
         }
     }
 
@@ -47,17 +47,14 @@ public class FilmService {
     }
 
     public List<Film> getTopFilms(Integer count, Integer genreId, String year) {
-            List<Film> filmsWithoutGenres = filmStorage.getTopFilms(count, year);
-            List<Film> filmsWithGenres = new ArrayList<>();
-            for (Film film : filmsWithoutGenres) {
-                Set<Genre> genres = genreStorage.getFilmGenres(film.getId());
-                Film correctFilm = film.withGenres(genres);
-                filmsWithGenres.add(correctFilm);
-            }
-            if (genreId != null) {
-                filmsWithGenres.removeIf(film -> !film.getGenres().contains(genreStorage.getGenreById(genreId)));
-            }
-            return filmsWithGenres;
+        List<Film> filmsWithoutGenres = filmStorage.getTopFilms(count, genreId, year);
+        List<Film> filmsWithGenres = new ArrayList<>();
+        for (Film film : filmsWithoutGenres) {
+            Set<Genre> genres = genreStorage.getFilmGenres(film.getId());
+            Film correctFilm = film.withGenres(genres);
+            filmsWithGenres.add(correctFilm);
+        }
+        return filmsWithGenres;
     }
 
     public Film createFilm(Film film) {
@@ -80,13 +77,13 @@ public class FilmService {
         genreStorage.checkGenres(film.getGenres());
         ratingMpaStorage.checkRatingId(film.getMpa().getId());
 
-        Film updatedFilm =  filmStorage.updateFilm(film);
+        Film updatedFilm = filmStorage.updateFilm(film);
         genreStorage.updateFilmGenres(film.getId(), film.getGenres());
         return updatedFilm;
     }
 
     public List<Film> findAllFilms() {
-        List<Film> filmsWithoutGenres =  filmStorage.findAllFilms();
+        List<Film> filmsWithoutGenres = filmStorage.findAllFilms();
         List<Film> filmsWithGenres = new ArrayList<>();
         for (Film film : filmsWithoutGenres) {
             Set<Genre> genres = genreStorage.getFilmGenres(film.getId());
