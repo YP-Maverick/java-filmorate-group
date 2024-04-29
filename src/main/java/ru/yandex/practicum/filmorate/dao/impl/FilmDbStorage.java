@@ -132,15 +132,51 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getTopFilms(Integer count) {
+    public List<Film> getTopFilms(Integer count, Integer genreId, String year) {
         log.debug("Получен запрос вывести список популярных фильмов");
 
-        long size = (count == null || count <= 0) ? 10L : count;
-        String sql = "SELECT f.*, "
+        String baseSql = "SELECT f.*, "
                 + "rm.name AS rating_name "
                 + "FROM films f "
                 + "JOIN rating_MPA rm ON rm.ID = f.rating_id "
+                + "LEFT JOIN film_genres fg ON fg.film_id = f.id "
+                + "WHERE (YEAR(f.release_date) = ?) %s (fg.genre_id = ?) "
                 + "ORDER BY likes DESC LIMIT ?";
-        return jdbcTemplate.query(sql, mapper::makeFilm, size);
+
+        if (year == null && genreId == null) {
+            String sql = "SELECT f.*, "
+                    + "rm.name AS rating_name "
+                    + "FROM films f "
+                    + "JOIN rating_MPA rm ON rm.ID = f.rating_id "
+                    + "ORDER BY likes DESC LIMIT ?";
+            return jdbcTemplate.query(sql, mapper::makeFilm, count);
+        } else if (year == null || genreId == null) {
+            String nonStrictSql = String.format(baseSql, "OR");
+            return jdbcTemplate.query(nonStrictSql, mapper::makeFilm, year, genreId, count);
+        } else {
+            String strictSql = String.format(baseSql, "AND");
+            return jdbcTemplate.query(strictSql, mapper::makeFilm, year, genreId, count);
+        }
+    }
+
+    @Override
+    public List<Film> getFilmsByDirector(Long directorId, String sortBy) {
+        String baseSql = "SELECT f.*, "
+                + "rm.name AS rating_name "
+                + "FROM films f "
+                + "JOIN rating_MPA rm ON rm.ID = f.rating_id "
+                + "JOIN film_directors fd ON fd.film_id = f.id "
+                + "WHERE fd.DIRECTOR_ID = ? ";
+        String orderBy = "ORDER BY %s DESC";
+        switch (sortBy) {
+            case "likes":
+                String likesSql = baseSql + String.format(orderBy, "f.likes");
+                return jdbcTemplate.query(likesSql, mapper::makeFilm, directorId);
+            case "year":
+                String yearSql = baseSql + String.format(orderBy, "f.release_date");
+                return jdbcTemplate.query(yearSql, mapper::makeFilm, directorId);
+            default:
+                return jdbcTemplate.query(baseSql, mapper::makeFilm, directorId);
+        }
     }
 }

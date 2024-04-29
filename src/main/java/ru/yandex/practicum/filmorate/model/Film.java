@@ -30,9 +30,11 @@ public class Film {
     Set<Genre> genres;
     @NotNull(message = "Рейтинг не может быть пустым")
     RatingMpa mpa;
+    @With
+    Set<Director> directors;
 
     public Film(Long id, String name, String description, LocalDate releaseDate, int duration,
-                Long likes, Set<Genre> genres, RatingMpa mpa) {
+                Long likes, Set<Genre> genres, RatingMpa mpa, Set<Director> directors) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -41,6 +43,7 @@ public class Film {
         this.likes = likes;
         this.genres = (genres == null) ? new HashSet<>() : genres;
         this.mpa = mpa;
+        this.directors = (directors == null) ? new HashSet<>() : directors;
     }
 
     public Map<String, Object> toMap() {

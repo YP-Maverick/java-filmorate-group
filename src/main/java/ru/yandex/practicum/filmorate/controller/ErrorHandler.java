@@ -13,7 +13,8 @@ import java.util.Map;
 @RestControllerAdvice(assignableTypes = {FilmController.class,
         UserController.class,
         GenreController.class,
-        RatingMpaController.class})
+        RatingMpaController.class,
+        DirectorController.class})
 public class ErrorHandler {
     private void log(Throwable e) {
         log.error("Исключение {}: {}", e, e.getMessage());
@@ -56,6 +57,14 @@ public class ErrorHandler {
     public Map<String, String> handleRatingExc(final RatingException e) {
         log(e);
         return Map.of("error", "Error with MPA",
+                "errorMessage", e.getMessage());
+    }
+
+    @ExceptionHandler({DirectorException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleDirectorExc(final DirectorException e) {
+        log(e);
+        return Map.of("error", "Error with director",
                 "errorMessage", e.getMessage());
     }
 }
