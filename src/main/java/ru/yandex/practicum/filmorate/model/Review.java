@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Builder;
 import lombok.Value;
+import lombok.With;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -12,6 +13,7 @@ import javax.validation.constraints.Positive;
 @Builder
 public class Review {
 
+    @With
     Long id; // Id отзыва
 
     @NotBlank(message = "Текст отзыва = NULL")

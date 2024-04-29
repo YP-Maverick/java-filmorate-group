@@ -100,6 +100,6 @@ public class ReviewService {
         checkUserId(userId);
         checkReviewId(reviewId);
 
-        reviewStorage.addDislike(reviewId, userId);
+        reviewStorage.deleteDislike(reviewId, userId);
     }
 }
