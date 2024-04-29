@@ -6,6 +6,8 @@ DROP TABLE IF EXISTS "FILMS" CASCADE;
 DROP TABLE IF EXISTS "RATING_MPA" CASCADE;
 DROP TABLE IF EXISTS "GENRES" CASCADE;
 DROP TABLE IF EXISTS "REVIEWS" CASCADE;
+DROP TABLE IF EXISTS "REVIEW_LIKES" CASCADE;
+DROP TABLE IF EXISTS "REVIEW_DISLIKES" CASCADE;
 
 -- Создание таблицы users
 CREATE TABLE IF NOT EXISTS users (
@@ -79,5 +81,21 @@ CREATE TABLE IF NOT EXISTS reviews (
     useful INTEGER
 
    CONSTRAINT not_blank CHECK (reviews.content <> '')
+);
+
+-- Создание таблицы review_likes
+CREATE TABLE IF NOT EXISTS review_likes (
+    review_id INTEGER REFERENCES reviews (id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES users (id),
+
+    CONSTRAINT pk_review_likes PRIMARY KEY(review_id, user_id)
+);
+
+-- Создание таблицы review_likes
+CREATE TABLE IF NOT EXISTS review_dislikes (
+    review_id INTEGER REFERENCES reviews (id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES users (id),
+
+    CONSTRAINT pk_review_likes PRIMARY KEY(review_id, user_id)
 );
 
