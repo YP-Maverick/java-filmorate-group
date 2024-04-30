@@ -245,4 +245,46 @@ public class FilmDbStorageTest {
         assertThat(incorrectTopFilms)
                 .isEqualTo(emptyList);
     }
+
+    @Test
+    public void testGetCommonFilms() {
+        Film film1 = createFilm();
+        Film film2 = createFilm();
+        Film film3 = createFilm();
+        Film film4 = createFilm();
+
+        User user1 = createUser();
+        User user2 = createUser();
+        User user3 = createUser();
+        User user4 = createUser();
+
+        filmStorage.addLike(film1.getId(), user1.getId());
+        filmStorage.addLike(film3.getId(), user1.getId());
+        filmStorage.addLike(film4.getId(), user1.getId());
+
+        filmStorage.addLike(film2.getId(), user2.getId());
+        filmStorage.addLike(film3.getId(), user2.getId());
+        filmStorage.addLike(film4.getId(), user2.getId());
+
+        filmStorage.addLike(film4.getId(), user3.getId());
+
+        Film film4WithLike = filmStorage.getFilmById(film4.getId());
+        Film film3WithLike = filmStorage.getFilmById(film3.getId());
+        List<Film> shouldCommonFilmsList = new ArrayList<>();
+        shouldCommonFilmsList.add(film4WithLike);
+        shouldCommonFilmsList.add(film3WithLike);
+
+        // Проверка метода getCommonFilms()
+        List<Film> commonFilms = filmStorage.getCommonFilms(user1.getId(), user2.getId());
+        List<Film> incorrectTopFilms = filmStorage.getCommonFilms(user3.getId(), user4.getId());
+        List<Film> emptyList = new ArrayList<>();
+
+        assertThat(commonFilms)
+                .isNotNull()
+                .usingRecursiveComparison()
+                .isEqualTo(shouldCommonFilmsList);
+
+        assertThat(incorrectTopFilms)
+                .isEqualTo(emptyList);
+    }
 }

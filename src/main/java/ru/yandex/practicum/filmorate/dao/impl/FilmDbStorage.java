@@ -158,4 +158,23 @@ public class FilmDbStorage implements FilmStorage {
             return jdbcTemplate.query(strictSql, mapper::makeFilm, year, genreId, count);
         }
     }
+
+    @Override
+    public List<Film> getCommonFilms (Long userId, Long friendId) {
+        log.debug("Получен запрос вывести список общих фильмов пользователя с id {} и пользователя с id {} отсортированных по популярности", userId, friendId);
+
+        String sql = "SELECT f.*, "
+                + "rm.name AS rating_name "
+                + "FROM films f "
+                + "JOIN rating_MPA rm ON rm.ID = f.rating_id "
+                + "WHERE f.id IN ( "
+                + "    SELECT fl1.film_id "
+                + "    FROM film_likes fl1 "
+                + "    JOIN film_likes fl2 ON fl1.film_id = fl2.film_id "
+                + "    WHERE fl1.user_id = ? AND fl2.user_id = ? "
+                + ") "
+                + "ORDER BY f.likes DESC";
+
+        return jdbcTemplate.query(sql, mapper::makeFilm, userId, friendId);
+    }
 }

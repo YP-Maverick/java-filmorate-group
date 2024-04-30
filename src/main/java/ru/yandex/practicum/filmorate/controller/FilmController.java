@@ -62,4 +62,12 @@ public class FilmController {
                                   @Pattern(regexp = "^\\d{4}$", message = "Параметр year указан некорректно") String year) {
         return filmService.getTopFilms(count, genreId, year);
     }
+
+    @GetMapping("/common")
+    public List<Film> getCommonFilms(@RequestParam(required = false)
+                                     @Positive(message = "Параметр userId должен быть положительным") Long userId,
+                                     @RequestParam(required = false)
+                                     @Positive(message = "Параметр friendId должен быть положительным") Long friendId) {
+        return filmService.getCommonFilms(userId, friendId);
+    }
 }

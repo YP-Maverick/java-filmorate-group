@@ -99,4 +99,8 @@ public class FilmService {
 
         return film.withGenres(genres);
     }
+
+    public List<Film> getCommonFilms(Long userId, Long friendId){
+        return filmStorage.getCommonFilms(userId, friendId);
+    }
 }
