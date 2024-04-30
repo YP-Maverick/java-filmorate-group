@@ -245,4 +245,42 @@ public class FilmDbStorageTest {
         assertThat(incorrectTopFilms)
                 .isEqualTo(emptyList);
     }
+
+    @Test
+    public void testGetRecommendations() {
+        Film film1 = createFilm();
+        Film film2 = createFilm();
+        Film film3 = createFilm();
+        Film film4 = createFilm();
+
+        User user1 = createUser();
+        User user2 = createUser();
+        User user3 = createUser();
+
+        filmStorage.addLike(film1.getId(), user1.getId());
+        filmStorage.addLike(film2.getId(), user1.getId());
+
+        filmStorage.addLike(film1.getId(), user2.getId());
+        filmStorage.addLike(film3.getId(), user2.getId());
+        filmStorage.addLike(film4.getId(), user2.getId());
+
+        Film film1Recommendation = filmStorage.getFilmById(film3.getId());
+        Film film2Recommendation = filmStorage.getFilmById(film4.getId());
+        List<Film> shouldRecommendationFilmsList = new ArrayList<>();
+        shouldRecommendationFilmsList.add(film1Recommendation);
+        shouldRecommendationFilmsList.add(film2Recommendation);
+
+        // Проверка метода getRecommendations()
+        List<Film> recommendations = filmStorage.getRecommendations(user1.getId());
+        List<Film> emptyRecommendations = filmStorage.getRecommendations(user3.getId());
+        List<Film> emptyList = new ArrayList<>();
+
+        assertThat(recommendations)
+                .isNotNull()
+                .usingRecursiveComparison()
+                .isEqualTo(shouldRecommendationFilmsList);
+
+        assertThat(emptyRecommendations)
+                .isEqualTo(emptyList);
+    }
 }

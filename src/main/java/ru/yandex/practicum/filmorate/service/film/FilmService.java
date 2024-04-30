@@ -99,4 +99,8 @@ public class FilmService {
 
         return film.withGenres(genres);
     }
+
+    public List<Film> getRecommendations(Long userId) {
+        return filmStorage.getRecommendations(userId);
+    }
 }
