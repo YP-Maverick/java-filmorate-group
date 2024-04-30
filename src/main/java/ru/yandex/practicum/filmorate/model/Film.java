@@ -40,7 +40,7 @@ public class Film {
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
-        this.likes = likes;
+        this.likes = (likes == null) ? 0L : likes;
         this.genres = (genres == null) ? new HashSet<>() : genres;
         this.mpa = mpa;
         this.directors = (directors == null) ? new HashSet<>() : directors;
