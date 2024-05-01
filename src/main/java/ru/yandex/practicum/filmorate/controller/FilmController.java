@@ -65,7 +65,8 @@ public class FilmController {
 
     @GetMapping("/director/{directorId}")
     public List<Film> getFilmsByDirector(@PathVariable
-                                         @Positive Long directorId,
+                                         @Positive(message = "Id режиссёра должен быть положительным")
+                                             Long directorId,
                                          @RequestParam String sortBy) {
         return filmService.getFilmsByDirector(directorId, sortBy);
     }

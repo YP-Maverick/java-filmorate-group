@@ -167,13 +167,12 @@ public class FilmDbStorage implements FilmStorage {
                 + "JOIN rating_MPA rm ON rm.ID = f.rating_id "
                 + "JOIN film_directors fd ON fd.film_id = f.id "
                 + "WHERE fd.DIRECTOR_ID = ? ";
-        String orderBy = "ORDER BY %s DESC";
         switch (sortBy) {
             case "likes":
-                String likesSql = baseSql + String.format(orderBy, "f.likes");
+                String likesSql = baseSql + "ORDER BY f.likes DESC";
                 return jdbcTemplate.query(likesSql, mapper::makeFilm, directorId);
             case "year":
-                String yearSql = baseSql + String.format(orderBy, "f.release_date");
+                String yearSql = baseSql + "ORDER BY f.release_date";
                 return jdbcTemplate.query(yearSql, mapper::makeFilm, directorId);
             default:
                 return jdbcTemplate.query(baseSql, mapper::makeFilm, directorId);

@@ -318,9 +318,9 @@ public class FilmDbStorageTest {
                 .isEqualTo(shouldLikesFilms);
 
         List<Film> shouldYearFilms = new ArrayList<>();
-        shouldYearFilms.add(film3WithLike);
-        shouldYearFilms.add(film1WithLike);
         shouldYearFilms.add(film2WithLike);
+        shouldYearFilms.add(film1WithLike);
+        shouldYearFilms.add(film3WithLike);
 
         // Проверка метода getFilmsByDirector() с сортировкой по годам
         List<Film> yearFilms = filmStorage.getFilmsByDirector(newDirector.getId(), "year");

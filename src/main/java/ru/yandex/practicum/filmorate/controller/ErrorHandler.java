@@ -28,6 +28,14 @@ public class ErrorHandler {
                 "errorMessage", e.getMessage());
     }
 
+    @ExceptionHandler({javax.validation.ValidationException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleValid(final javax.validation.ValidationException e) {
+        log(e);
+        return Map.of("error", "Validation error",
+                "errorMessage", e.getMessage());
+    }
+
     @ExceptionHandler({NotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFound(final NotFoundException e) {

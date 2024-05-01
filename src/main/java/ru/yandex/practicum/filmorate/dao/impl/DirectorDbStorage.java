@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.DirectorStorage;
 import ru.yandex.practicum.filmorate.dao.mapper.ModelMapper;
+import ru.yandex.practicum.filmorate.exception.DirectorException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
 
@@ -143,7 +144,7 @@ public class DirectorDbStorage implements DirectorStorage {
             directorDbIdList.forEach(directorDbIdList::remove);
             Long directorId = directorDbIdList.stream().findFirst().get();
             log.error("Режиссёра с id {} нет в БД.", directorId);
-            throw new NotFoundException(String.format("Неверно указан id (%d) режиссёра.", directorId));
+            throw new DirectorException(String.format("Неверно указан id (%d) режиссёра.", directorId));
         }
     }
 }
