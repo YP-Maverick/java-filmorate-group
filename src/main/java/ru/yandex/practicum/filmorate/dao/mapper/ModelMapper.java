@@ -6,7 +6,6 @@ import ru.yandex.practicum.filmorate.model.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-@SuppressWarnings("checkstyle:Regexp")
 @Component
 public class ModelMapper {
 
@@ -49,7 +48,7 @@ public class ModelMapper {
                 .build();
     }
 
-    public Review maleReview(ResultSet rs, int rowNum) throws SQLException {
+    public Review makeReview(ResultSet rs, int rowNum) throws SQLException {
         return Review.builder()
                 .id(rs.getLong("id"))
                 .content(rs.getString("content"))

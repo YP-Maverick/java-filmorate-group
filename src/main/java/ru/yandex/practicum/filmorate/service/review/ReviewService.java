@@ -9,6 +9,8 @@ import ru.yandex.practicum.filmorate.dao.UserStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
 
+import java.util.List;
+
 @AllArgsConstructor
 @Service
 @Slf4j
@@ -59,12 +61,31 @@ public class ReviewService {
         return reviewStorage.updateReview(review);
     }
 
+    //Удаление отзыва по его идентификатору
+    public void deleteReview(Long id) {
+        checkReviewId(id);
+        reviewStorage.deleteReview(id);
+    }
+
     // Получение отзыва по его идентификатору
     public Review getReview(Long reviewId) {
 
         checkReviewId(reviewId);
 
         return reviewStorage.getReview(reviewId);
+    }
+
+    // Получение отзыва по идентификатору фильма. Отсортированы по useful
+    public List<Review> getReviewsByFilmId(Long filmId, int count) {
+        checkFilmId(filmId);
+
+        return reviewStorage.getReviewsByFilmId(filmId, count);
+    }
+
+    // Получение всех отзывов. Отсортированы по useful
+    public List<Review> getAllReviews() {
+
+        return reviewStorage.getAllReviews();
     }
 
     // Добавление лайка к отзыву
