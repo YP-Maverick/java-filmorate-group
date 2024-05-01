@@ -49,6 +49,7 @@ public class ModelMapper {
                 .build();
     }
 
+
     public Event makeEvent(ResultSet rs, int rowNum) throws SQLException {
         return Event.builder()
                 .id(rs.getLong("id"))
@@ -57,6 +58,11 @@ public class ModelMapper {
                 .timeStamp(rs.getObject("event_timestamp", LocalDateTime.class))
                 .type(rs.getString("type"))
                 .operation(rs.getString("operation"))
+                .build();
+    public Director makeDirector(ResultSet rs, int rowNum) throws SQLException {
+        return Director.builder()
+                .id(rs.getLong("id"))
+                .name(rs.getString("name"))
                 .build();
     }
 }
