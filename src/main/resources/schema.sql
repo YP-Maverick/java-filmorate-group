@@ -77,10 +77,9 @@ CREATE TABLE IF NOT EXISTS reviews (
    is_positive BOOLEAN,
    user_id BIGINT REFERENCES users (id),
    film_id BIGINT REFERENCES films (id) ON DELETE CASCADE,
+   useful INTEGER DEFAULT 0
 
-    useful INTEGER
-
-   CONSTRAINT not_blank CHECK (reviews.content <> '')
+   CONSTRAINT content_not_blank CHECK (reviews.content <> '')
 );
 
 -- Создание таблицы review_likes
@@ -91,11 +90,10 @@ CREATE TABLE IF NOT EXISTS review_likes (
     CONSTRAINT pk_review_likes PRIMARY KEY(review_id, user_id)
 );
 
--- Создание таблицы review_likes
+-- Создание таблицы review_dislikes
 CREATE TABLE IF NOT EXISTS review_dislikes (
     review_id INTEGER REFERENCES reviews (id) ON DELETE CASCADE,
     user_id INTEGER REFERENCES users (id),
-
-    CONSTRAINT pk_review_likes PRIMARY KEY(review_id, user_id)
+    CONSTRAINT pk_review_dislikes PRIMARY KEY(review_id, user_id)
 );
 
