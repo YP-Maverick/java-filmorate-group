@@ -3,17 +3,14 @@ package ru.yandex.practicum.filmorate.service.film;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.dao.FilmStorage;
-import ru.yandex.practicum.filmorate.dao.GenreStorage;
-import ru.yandex.practicum.filmorate.dao.RatingMpaStorage;
-import ru.yandex.practicum.filmorate.dao.UserStorage;
+import ru.yandex.practicum.filmorate.dao.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.dao.FilmStorage;
+import ru.yandex.practicum.filmorate.dao.UserStorage;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @AllArgsConstructor
 @Service
@@ -23,6 +20,7 @@ public class FilmService {
     private final UserStorage userStorage;
     private final GenreStorage genreStorage;
     private final RatingMpaStorage ratingMpaStorage;
+    private final EventStorage eventStorage;
 
     private void checkFilmAndUserId(Long filmId, Long userId) {
         if (!filmStorage.contains(filmId)) {
@@ -36,13 +34,13 @@ public class FilmService {
 
     public void addLike(Long filmId, Long userId) {
         checkFilmAndUserId(filmId, userId);
-
+        eventStorage.add("LIKE", "ADD", userId, filmId);
         filmStorage.addLike(filmId, userId);
     }
 
     public void deleteLike(Long filmId, Long userId) {
         checkFilmAndUserId(filmId, userId);
-
+        eventStorage.add("LIKE", "REMOVE", userId, filmId);
         filmStorage.deleteLike(filmId, userId);
     }
 
