@@ -57,9 +57,7 @@ public class ReviewDbStorage implements ReviewStorage {
         parameters.put("useful", 0);
 
         Long userId = simpleJdbcInsert.executeAndReturnKey(parameters).longValue();
-        Review review1 = review.withId(userId);
-        log.warn(review1.toString());
-        return review1;
+        return review.withId(userId);
     }
 
     @Override
