@@ -10,10 +10,12 @@ import ru.yandex.practicum.filmorate.exception.*;
 import java.util.Map;
 
 @Slf4j
-@RestControllerAdvice(assignableTypes = {FilmController.class,
+@RestControllerAdvice(assignableTypes = {
+        FilmController.class,
         UserController.class,
         GenreController.class,
-        RatingMpaController.class})
+        RatingMpaController.class,
+        ReviewController.class})
 public class ErrorHandler {
     private void log(Throwable e) {
         log.error("Исключение {}: {}", e, e.getMessage());

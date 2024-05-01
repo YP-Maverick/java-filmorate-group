@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.service.review.ReviewService;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/reviews")
@@ -19,8 +20,7 @@ public class ReviewController {
 
     @PostMapping
     public Review create(@Valid @RequestBody Review review) {
-
-        return reviewService.createReview(review);
+        return  reviewService.createReview(review);
     }
 
     @PutMapping
@@ -28,9 +28,27 @@ public class ReviewController {
         return reviewService.updateReview(review);
     }
 
-    @GetMapping
-    public Review get(Long reviewId) {
-        return reviewService.getReview(reviewId);
+    @GetMapping("/{id}")
+    public Review get(@PathVariable Long id) {
+        return reviewService.getReview(id);
+    }
+
+    @GetMapping()
+    public List<Review> getReviews(
+            @RequestParam(value = "filmId", required = false) Long filmId,
+            @RequestParam(value = "count", required = false, defaultValue = "10") int count
+    ) {
+        if (filmId != null) {
+
+            return reviewService.getReviewsByFilmId(filmId, count);
+        } else {
+            return reviewService.getAllReviews();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteReview(@PathVariable Long id) {
+        reviewService.deleteReview(id);
     }
 
     @PutMapping("/{id}/like/{userId}")
@@ -52,5 +70,4 @@ public class ReviewController {
     public void deleteDislike(@PathVariable Long id, @PathVariable Long userId) {
         reviewService.deleteDislike(id, userId);
     }
-
 }
