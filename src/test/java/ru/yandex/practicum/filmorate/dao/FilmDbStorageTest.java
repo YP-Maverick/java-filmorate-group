@@ -7,9 +7,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import ru.yandex.practicum.filmorate.dao.impl.DirectorDbStorage;
 import ru.yandex.practicum.filmorate.dao.impl.FilmDbStorage;
 import ru.yandex.practicum.filmorate.dao.impl.UserDbStorage;
 import ru.yandex.practicum.filmorate.dao.mapper.ModelMapper;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.RatingMpa;
 import ru.yandex.practicum.filmorate.model.User;
@@ -17,6 +19,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,6 +31,7 @@ public class FilmDbStorageTest {
     private final JdbcTemplate jdbcTemplate;
     private FilmStorage filmStorage;
     private UserStorage userStorage;
+    private DirectorStorage directorStorage;
     private static ModelMapper modelMapper;
 
     private Film createFilm() {
@@ -66,6 +70,7 @@ public class FilmDbStorageTest {
     public void beforeEach() {
         userStorage = new UserDbStorage(jdbcTemplate, modelMapper);
         filmStorage = new FilmDbStorage(jdbcTemplate, modelMapper);
+        directorStorage = new DirectorDbStorage(jdbcTemplate, modelMapper);
     }
 
     @Test
@@ -233,11 +238,100 @@ public class FilmDbStorageTest {
         shouldTopFilmsList.add(film3WithLike);
 
         // Проверка метода getTopFilms()
-        List<Film> topFilms = filmStorage.getTopFilms(3);
+        List<Film> topFilms = filmStorage.getTopFilms(3, null,"2020");
+        List<Film> incorrectTopFilms = filmStorage.getTopFilms(3, null, "1990");
+        List<Film> emptyList = new ArrayList<>();
 
         assertThat(topFilms)
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(shouldTopFilmsList);
+
+        assertThat(incorrectTopFilms)
+                .isEqualTo(emptyList);
+    }
+
+    @Test
+    public void testGetFilmsByDirector() {
+        User user1 = createUser();
+        User user2 = createUser();
+        User user3 = createUser();
+
+        Director director = Director.builder()
+                .name("New Director")
+                .build();
+        Director newDirector =  directorStorage.create(director);
+
+        Film film1 = createFilm();
+        directorStorage.addFilmDirectors(film1.getId(), Set.of(newDirector));
+
+        Film secondFilm = Film.builder()
+                .name("New Film")
+                .description("Film about cats")
+                .releaseDate(LocalDate.of(2019, 1, 1))
+                .duration(100)
+                .mpa(RatingMpa.builder()
+                        .id(1)
+                        .name("G")
+                        .build())
+                .build();
+        Film film2 = filmStorage.create(secondFilm);
+        directorStorage.addFilmDirectors(film2.getId(), Set.of(newDirector));
+
+        Film thirdFilm = Film.builder()
+                .name("Some Film")
+                .description("Good film")
+                .releaseDate(LocalDate.of(2023, 1, 1))
+                .duration(90)
+                .mpa(RatingMpa.builder()
+                        .id(2)
+                        .name("PG")
+                        .build())
+                .build();
+        Film film3 = filmStorage.create(thirdFilm);
+        directorStorage.addFilmDirectors(film3.getId(), Set.of(newDirector));
+
+        filmStorage.addLike(film2.getId(), user1.getId());
+        filmStorage.addLike(film2.getId(), user2.getId());
+        filmStorage.addLike(film2.getId(), user3.getId());
+
+        filmStorage.addLike(film1.getId(), user1.getId());
+        filmStorage.addLike(film1.getId(), user3.getId());
+
+        filmStorage.addLike(film3.getId(), user2.getId());
+
+        Film film1WithLike = filmStorage.getFilmById(film1.getId());
+        Film film2WithLike = filmStorage.getFilmById(film2.getId());
+        Film film3WithLike = filmStorage.getFilmById(film3.getId());
+
+        List<Film> shouldLikesFilms = new ArrayList<>();
+        shouldLikesFilms.add(film2WithLike);
+        shouldLikesFilms.add(film1WithLike);
+        shouldLikesFilms.add(film3WithLike);
+
+        // Проверка метода getFilmsByDirector() с сортировкой по лайкам
+        List<Film> likeFilms = filmStorage.getFilmsByDirector(newDirector.getId(), "likes");
+
+        assertThat(likeFilms)
+                .isNotNull()
+                .usingRecursiveComparison()
+                .isEqualTo(shouldLikesFilms);
+
+        List<Film> shouldYearFilms = new ArrayList<>();
+        shouldYearFilms.add(film2WithLike);
+        shouldYearFilms.add(film1WithLike);
+        shouldYearFilms.add(film3WithLike);
+
+        // Проверка метода getFilmsByDirector() с сортировкой по годам
+        List<Film> yearFilms = filmStorage.getFilmsByDirector(newDirector.getId(), "year");
+
+        assertThat(yearFilms)
+                .isNotNull()
+                .usingRecursiveComparison()
+                .isEqualTo(shouldYearFilms);
+
+        // Проверка метода getFilmsByDirector() с неправильным параметром сортировки
+        List<Film> directorsFilm = filmStorage.getFilmsByDirector(newDirector.getId(), "");
+        assertTrue(shouldYearFilms.containsAll(directorsFilm));
     }
 }

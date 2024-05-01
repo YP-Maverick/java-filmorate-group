@@ -58,4 +58,12 @@ public class ModelMapper {
                 .useful(rs.getInt("useful"))
                 .build();
     }
+                
+
+    public Director makeDirector(ResultSet rs, int rowNum) throws SQLException {
+        return Director.builder()
+                .id(rs.getLong("id"))
+                .name(rs.getString("name"))
+                .build();
+    }
 }
