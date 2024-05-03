@@ -124,6 +124,14 @@ public class FilmService {
     }
 
     public List<Film> getRecommendations(Long userId) {
-        return filmStorage.getRecommendations(userId);
+        List<Film> filmsWithoutGenresAndDir = filmStorage.getRecommendations(userId);
+        List<Film> correctFilms = new ArrayList<>();
+        for (Film film : filmsWithoutGenresAndDir) {
+            Set<Genre> genres = genreStorage.getFilmGenres(film.getId());
+            Set<Director> directors = directorStorage.getFilmDirectors(film.getId());
+            Film correctFilm = film.withGenres(genres).withDirectors(directors);
+            correctFilms.add(correctFilm);
+        }
+        return correctFilms;
     }
 }
