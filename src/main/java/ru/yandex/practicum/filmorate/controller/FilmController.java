@@ -70,4 +70,11 @@ public class FilmController {
                                          @RequestParam String sortBy) {
         return filmService.getFilmsByDirector(directorId, sortBy);
     }
+
+    @GetMapping("/common")
+    public List<Film> getCommonFilms(
+            @RequestParam @Positive(message = "Параметр userId должен быть положительным") Long userId,
+            @RequestParam @Positive(message = "Параметр friendId должен быть положительным") Long friendId) {
+        return filmService.getCommonFilms(userId, friendId);
+    }
 }
