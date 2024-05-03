@@ -64,10 +64,9 @@ public class FilmController {
     }
 
     @GetMapping("/common")
-    public List<Film> getCommonFilms(@RequestParam(required = false)
-                                     @Positive(message = "Параметр userId должен быть положительным") Long userId,
-                                     @RequestParam(required = false)
-                                     @Positive(message = "Параметр friendId должен быть положительным") Long friendId) {
+    public List<Film> getCommonFilms(
+            @RequestParam @Positive(message = "Параметр userId должен быть положительным") Long userId,
+            @RequestParam @Positive(message = "Параметр friendId должен быть положительным") Long friendId) {
         return filmService.getCommonFilms(userId, friendId);
     }
 }
