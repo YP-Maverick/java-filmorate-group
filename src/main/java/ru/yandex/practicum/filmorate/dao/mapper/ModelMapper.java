@@ -48,6 +48,18 @@ public class ModelMapper {
                 .build();
     }
 
+    public Review makeReview(ResultSet rs, int rowNum) throws SQLException {
+        return Review.builder()
+                .id(rs.getLong("id"))
+                .content(rs.getString("content"))
+                .isPositive(rs.getBoolean("is_positive"))
+                .userId(rs.getLong("user_id"))
+                .filmId(rs.getLong("film_id"))
+                .useful(rs.getInt("useful"))
+                .build();
+    }
+                
+
     public Director makeDirector(ResultSet rs, int rowNum) throws SQLException {
         return Director.builder()
                 .id(rs.getLong("id"))
