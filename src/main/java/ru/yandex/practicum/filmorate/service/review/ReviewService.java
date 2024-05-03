@@ -55,16 +55,12 @@ public class ReviewService {
 
     // Обновление отзыва
     public Review updateReview(Review review) {
-
-        checkReviewId(review.getId());
-
         return reviewStorage.updateReview(review);
     }
 
     //Удаление отзыва по его идентификатору
-    public void deleteReview(Long id) {
-        checkReviewId(id);
-        reviewStorage.deleteReview(id);
+    public Review deleteReview(Long id) {
+        return reviewStorage.deleteReview(id);
     }
 
     // Получение отзыва по его идентификатору

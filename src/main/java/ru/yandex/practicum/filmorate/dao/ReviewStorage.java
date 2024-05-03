@@ -11,7 +11,7 @@ public interface ReviewStorage {
 
     Review updateReview(Review review);
 
-    void deleteReview(Long reviewId);
+    Review deleteReview(Long reviewId);
 
     Review getReview(Long reviewId);
 

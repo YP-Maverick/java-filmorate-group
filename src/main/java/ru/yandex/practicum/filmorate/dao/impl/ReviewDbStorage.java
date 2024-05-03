@@ -49,7 +49,6 @@ public class ReviewDbStorage implements ReviewStorage {
                 .usingGeneratedKeyColumns("id");
 
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("id",  review.getId());
         parameters.put("content",  review.getContent());
         parameters.put("is_positive",  review.getIsPositive());
         parameters.put("user_id",  review.getUserId());
@@ -82,11 +81,16 @@ public class ReviewDbStorage implements ReviewStorage {
     }
 
     @Override
-    public void deleteReview(Long reviewId) {
+    public Review deleteReview(Long reviewId) {
         log.debug("Получен запрос удалить отзыв с id {}.", reviewId);
 
+        Review review = getReview(reviewId);
         String sql = "DELETE FROM reviews WHERE id = ?";
-        jdbcTemplate.update(sql, reviewId);
+        int row = jdbcTemplate.update(sql, reviewId);
+        if (row != 1) {
+            log.error("Запрос обновить несуществующий отзыв с id {}.", review.getId());
+            throw new NotFoundException(String.format("Отзыва с id %d не существует.", review.getId()));
+        } else return review;
     }
 
     @Override
@@ -96,9 +100,10 @@ public class ReviewDbStorage implements ReviewStorage {
         String sql = "SELECT * FROM reviews WHERE id = ?";
         List<Review> reviews = jdbcTemplate.query(sql, mapper::makeReview, reviewId);
 
-        return reviews.stream()
-                      .findFirst()
-                      .orElse(null);
+        if (reviews.isEmpty()) {
+            log.error("Запрос получить отзыв по неверному id {}.", reviewId);
+            throw new NotFoundException(String.format("Отзыв с id %d не существует.", reviewId));
+        } else return reviews.get(0);
     }
 
     @Override
