@@ -10,10 +10,13 @@ import ru.yandex.practicum.filmorate.exception.*;
 import java.util.Map;
 
 @Slf4j
-@RestControllerAdvice(assignableTypes = {FilmController.class,
+@RestControllerAdvice(assignableTypes = {
+        FilmController.class,
         UserController.class,
         GenreController.class,
-        RatingMpaController.class})
+        RatingMpaController.class,
+        ReviewController.class,
+        DirectorController.class})
 public class ErrorHandler {
     private void log(Throwable e) {
         log.error("Исключение {}: {}", e, e.getMessage());
@@ -22,6 +25,14 @@ public class ErrorHandler {
     @ExceptionHandler({ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidation(final ValidationException e) {
+        log(e);
+        return Map.of("error", "Validation error",
+                "errorMessage", e.getMessage());
+    }
+
+    @ExceptionHandler({javax.validation.ValidationException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleValid(final javax.validation.ValidationException e) {
         log(e);
         return Map.of("error", "Validation error",
                 "errorMessage", e.getMessage());
@@ -56,6 +67,14 @@ public class ErrorHandler {
     public Map<String, String> handleRatingExc(final RatingException e) {
         log(e);
         return Map.of("error", "Error with MPA",
+                "errorMessage", e.getMessage());
+    }
+
+    @ExceptionHandler({DirectorException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleDirectorExc(final DirectorException e) {
+        log(e);
+        return Map.of("error", "Error with director",
                 "errorMessage", e.getMessage());
     }
 }

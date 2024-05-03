@@ -1,10 +1,7 @@
 package ru.yandex.practicum.filmorate.dao.mapper;
 
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.RatingMpa;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -47,6 +44,25 @@ public class ModelMapper {
     public RatingMpa makeRatingMpa(ResultSet rs, int rowNum) throws SQLException {
         return RatingMpa.builder()
                 .id(rs.getInt("id"))
+                .name(rs.getString("name"))
+                .build();
+    }
+
+    public Review makeReview(ResultSet rs, int rowNum) throws SQLException {
+        return Review.builder()
+                .id(rs.getLong("id"))
+                .content(rs.getString("content"))
+                .isPositive(rs.getBoolean("is_positive"))
+                .userId(rs.getLong("user_id"))
+                .filmId(rs.getLong("film_id"))
+                .useful(rs.getInt("useful"))
+                .build();
+    }
+                
+
+    public Director makeDirector(ResultSet rs, int rowNum) throws SQLException {
+        return Director.builder()
+                .id(rs.getLong("id"))
                 .name(rs.getString("name"))
                 .build();
     }
