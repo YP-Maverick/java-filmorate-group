@@ -23,7 +23,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class FriendsDbStorageTest {
     private final JdbcTemplate jdbcTemplate;
     private FriendsStorage friendsStorage;
-    private  UserStorage userStorage;
+    private UserStorage userStorage;
     private static ModelMapper mapper;
 
     private User createUser() {
