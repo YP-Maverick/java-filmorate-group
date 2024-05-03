@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.validation.IsAfter;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Value
 @Builder
@@ -33,6 +34,7 @@ public class Film {
     @With
     Set<Director> directors;
 
+
     public Film(Long id, String name, String description, LocalDate releaseDate, int duration,
                 Long likes, Set<Genre> genres, RatingMpa mpa, Set<Director> directors) {
         this.id = id;
@@ -41,9 +43,14 @@ public class Film {
         this.releaseDate = releaseDate;
         this.duration = duration;
         this.likes = (likes == null) ? 0L : likes;
-        this.genres = (genres == null) ? new HashSet<>() : genres;
+
+        this.genres = (genres == null) ? new HashSet<>() : genres.stream()
+                .sorted(Comparator.comparing(Genre::getId))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         this.mpa = mpa;
-        this.directors = (directors == null) ? new HashSet<>() : directors;
+        this.directors = (directors == null) ? new HashSet<>() : directors.stream()
+                .sorted(Comparator.comparing(Director::getId))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     public Map<String, Object> toMap() {
