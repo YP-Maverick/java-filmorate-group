@@ -5,8 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.FriendsStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.dao.UserStorage;
+import ru.yandex.practicum.filmorate.service.film.FilmService;
 
 import java.util.*;
 
@@ -16,6 +18,7 @@ import java.util.*;
 public class UserService {
     private final UserStorage userStorage;
     private final FriendsStorage friendsStorage;
+    private  final FilmService filmService;
 
     private void checkId(Long userId) {
         if (!userStorage.contains(userId)) {
@@ -66,5 +69,9 @@ public class UserService {
 
     public List<User> findAllUsers() {
         return userStorage.findAllUsers();
+    }
+
+    public List<Film> getRecommendations(Long userId) {
+        return filmService.getRecommendations(userId);
     }
 }

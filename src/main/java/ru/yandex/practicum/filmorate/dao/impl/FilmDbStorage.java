@@ -178,4 +178,22 @@ public class FilmDbStorage implements FilmStorage {
                 return jdbcTemplate.query(baseSql, mapper::makeFilm, directorId);
         }
     }
+
+    @Override
+    public List<Film> getRecommendations (Long userId) {
+        log.debug("Рекомендации фильмов для пользователя с id {} .", userId);
+
+        String sql = "SELECT f.*, "
+                + "rm.name AS rating_name "
+                + "FROM films f "
+                + "JOIN rating_MPA rm ON rm.ID = f.rating_id "
+                + "JOIN film_likes fl ON f.id = fl.film_id "
+                + "WHERE f.id NOT IN (SELECT film_id FROM film_likes WHERE user_id = ?) "
+                + "AND fl.user_id IN (SELECT user_id FROM film_likes "
+                + "WHERE film_id IN (SELECT film_id FROM film_likes WHERE user_id = ?) "
+                + "GROUP BY user_id "
+                + "ORDER BY COUNT(film_id) DESC LIMIT 10)"
+                + "GROUP BY f.id";
+        return jdbcTemplate.query(sql, mapper::makeFilm, userId,userId);
+    }
 }
