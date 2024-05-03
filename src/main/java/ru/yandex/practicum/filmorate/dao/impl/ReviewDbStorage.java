@@ -151,12 +151,8 @@ public class ReviewDbStorage implements ReviewStorage {
         String deleteLikeSql = "DELETE FROM review_likes WHERE review_id = ? AND user_id = ?";
         String updateUsefulSql = "UPDATE reviews SET useful = useful - 1 WHERE id = ?";
 
-        try {
-            jdbcTemplate.update(deleteLikeSql, userId);
-            jdbcTemplate.update(updateUsefulSql, reviewId);
-        } catch (DataAccessException e) {
-            log.error("Ошибка при удалении лайка пользователя ({}) у отзыва ({}).", userId, reviewId);
-        }
+        jdbcTemplate.update(deleteLikeSql, userId);
+        jdbcTemplate.update(updateUsefulSql, reviewId);
     }
 
     @Override
@@ -184,13 +180,8 @@ public class ReviewDbStorage implements ReviewStorage {
         String deleteDislikeSql = "DELETE FROM review_dislikes WHERE review_id = ? AND user_id = ?";
         String updateUsefulSql = "UPDATE reviews SET useful = useful + 1 WHERE id = ?";
 
-        try {
-            jdbcTemplate.update(deleteDislikeSql, reviewId);
-            jdbcTemplate.update(updateUsefulSql, reviewId);
-        } catch (DataAccessException e) {
-            log.error("Ошибка при удалении дизлайка пользователя ({}) у отзыва ({}).", userId, reviewId);
-            throw new LikeException(String.format("Пользователь %d уже поставил дизлайк отзыву %d.",
-                    userId, reviewId));
-        }
+
+        jdbcTemplate.update(deleteDislikeSql, reviewId);
+        jdbcTemplate.update(updateUsefulSql, reviewId);
     }
 }
