@@ -2,31 +2,30 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.relational.core.sql.In;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import javax.validation.constraints.Positive;
 import java.util.HashMap;
 import java.util.Map;
 
 @Data
 @Builder
 public class Event {
-    Long id;
-    String type;
+    @Positive
+    Long eventId;
+    String eventType;
     String operation;
-    LocalDateTime timeStamp;
-    Long user_id;
-    Long entity_id;
+    Long timestamp;
+    Long userId;
+    Long entityId;
 
     public Map<String, Object> toMap() {
         Map<String, Object> values = new HashMap<>();
-        values.put("id", id);
-        values.put("type", type);
+        values.put("event_id", eventId);
+        values.put("type", eventType);
         values.put("operation", operation);
-        values.put("event_timestamp", timeStamp);
-        values.put("user_id", user_id);
-        values.put("entity_id", entity_id);
+        values.put("event_timestamp", timestamp);
+        values.put("user_id", userId);
+        values.put("entity_id", entityId);
         return values;
     }
 }

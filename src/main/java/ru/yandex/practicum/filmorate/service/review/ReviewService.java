@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service.review;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.EventStorage;
 import ru.yandex.practicum.filmorate.dao.FilmStorage;
 import ru.yandex.practicum.filmorate.dao.ReviewStorage;
 import ru.yandex.practicum.filmorate.dao.UserStorage;
@@ -19,6 +20,7 @@ public class ReviewService {
     private final UserStorage userStorage;
     private final ReviewStorage reviewStorage;
     private final FilmStorage filmStorage;
+    private final EventStorage eventStorage;
 
     private void checkReviewId(Long reviewId) {
 
@@ -46,20 +48,24 @@ public class ReviewService {
 
     // Создание отзыва
     public Review createReview(Review review) {
-
         checkUserId(review.getUserId());
         checkFilmId(review.getFilmId());
-
-        return reviewStorage.createReview(review);
+        Review review1 = reviewStorage.createReview(review);
+        eventStorage.add("REVIEW", "ADD", review1.getUserId(), review1.getId());
+        return review1;
     }
 
     // Обновление отзыва
     public Review updateReview(Review review) {
-        return reviewStorage.updateReview(review);
+        Review review1 = reviewStorage.updateReview(review);
+        eventStorage.add("REVIEW", "UPDATE", review1.getUserId(), review1.getId());
+        return review1;
     }
 
     //Удаление отзыва по его идентификатору
     public Review deleteReview(Long id) {
+        Review review = reviewStorage.getReview(id);
+        eventStorage.add("REVIEW", "REMOVE", review.getUserId(), review.getId());
         return reviewStorage.deleteReview(id);
     }
 
@@ -89,7 +95,6 @@ public class ReviewService {
 
         checkUserId(userId);
         checkReviewId(reviewId);
-
         reviewStorage.addLike(reviewId, userId);
     }
 
@@ -98,7 +103,6 @@ public class ReviewService {
 
         checkUserId(userId);
         checkReviewId(reviewId);
-
         reviewStorage.deleteLike(reviewId, userId);
     }
 
@@ -107,7 +111,6 @@ public class ReviewService {
 
         checkUserId(userId);
         checkReviewId(reviewId);
-
         reviewStorage.addDislike(reviewId, userId);
     }
 
@@ -116,7 +119,6 @@ public class ReviewService {
 
         checkUserId(userId);
         checkReviewId(reviewId);
-
         reviewStorage.deleteDislike(reviewId, userId);
     }
 }

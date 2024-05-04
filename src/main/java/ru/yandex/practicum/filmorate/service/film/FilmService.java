@@ -36,14 +36,14 @@ public class FilmService {
 
     public void addLike(Long filmId, Long userId) {
         checkFilmAndUserId(filmId, userId);
-        eventStorage.add("LIKE", "ADD", userId, filmId);
         filmStorage.addLike(filmId, userId);
+        eventStorage.add("LIKE", "ADD", userId, filmId);
     }
 
     public void deleteLike(Long filmId, Long userId) {
         checkFilmAndUserId(filmId, userId);
-        eventStorage.add("LIKE", "REMOVE", userId, filmId);
         filmStorage.deleteLike(filmId, userId);
+        eventStorage.add("LIKE", "REMOVE", userId, filmId);
     }
 
     public List<Film> getTopFilms(Integer count, Integer genreId, String year) {

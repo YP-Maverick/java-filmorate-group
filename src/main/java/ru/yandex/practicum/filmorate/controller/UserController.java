@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.user.UserService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 @RestController
@@ -63,7 +64,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/feed")
-    public List<Event> getUserFeed(@PathVariable Long id) {
+    public List<Event> getUserFeed(@PathVariable @Positive Long id) {
         return userService.getAllEvents(id);
     }
 }

@@ -10,7 +10,7 @@ import ru.yandex.practicum.filmorate.dao.EventStorage;
 import ru.yandex.practicum.filmorate.dao.mapper.ModelMapper;
 import ru.yandex.practicum.filmorate.model.Event;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @AllArgsConstructor
@@ -21,23 +21,23 @@ public class EventDbStorage implements EventStorage {
     private final JdbcTemplate jdbcTemplate;
     private final ModelMapper mapper;
 
-    public Long add(String type, String operation, Long userId, Long filmId) {
+    public void add(String eventType, String operation, Long userId, Long entityId) {
         Event event = Event.builder()
-                .timeStamp(LocalDateTime.now())
-                .type(type)
+                .timestamp(Instant.now().toEpochMilli())
+                .eventType(eventType)
                 .operation(operation)
-                .user_id(userId)
-                .entity_id(filmId)
+                .userId(userId)
+                .entityId(entityId)
                 .build();
-        log.debug("Запрос создать нового пользователя.");
+        log.debug("Создано новое событие в историю");
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("events")
-                .usingGeneratedKeyColumns("id");
-        return simpleJdbcInsert.executeAndReturnKey(event.toMap()).longValue();
+                .withTableName("EVENTS")
+                .usingGeneratedKeyColumns("EVENT_ID");
+        simpleJdbcInsert.executeAndReturnKey(event.toMap()).longValue();
     }
 
     public List<Event> getAll(Long id) {
-        String sqlQuery = "SELECT * FROM events WHERE user_id = ? ORDER BY event_timestamp;";
+        String sqlQuery = "SELECT EVENT_ID, \"TYPE\", OPERATION, EVENT_TIMESTAMP, USER_ID, ENTITY_ID FROM PUBLIC.EVENTS WHERE USER_ID = ?";
         return jdbcTemplate.query(sqlQuery, mapper::makeEvent, id);
     }
 }

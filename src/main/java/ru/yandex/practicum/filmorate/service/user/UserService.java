@@ -30,8 +30,8 @@ public class UserService {
     public void addFriend(Long userId, Long friendId) {
         checkId(userId);
         checkId(friendId);
-        eventStorage.add("FRIEND", "ADD", userId, friendId);
         friendsStorage.addFriend(userId, friendId);
+        eventStorage.add("FRIEND", "ADD", userId, friendId);
     }
 
     public long deleteFriend(Long userId, Long friendId) {
@@ -72,6 +72,7 @@ public class UserService {
     }
 
     public List<Event> getAllEvents(Long userId) {
+        userStorage.getUserById(userId);
         return eventStorage.getAll(userId);
     }
 }

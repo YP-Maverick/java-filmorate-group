@@ -5,7 +5,6 @@ import ru.yandex.practicum.filmorate.model.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 
 @Component
 public class ModelMapper {
@@ -51,11 +50,11 @@ public class ModelMapper {
 
     public Event makeEvent(ResultSet rs, int rowNum) throws SQLException {
         return Event.builder()
-                .id(rs.getLong("id"))
-                .entity_id(rs.getLong("entity_id"))
-                .user_id(rs.getLong("user_id"))
-                .timeStamp(rs.getObject("event_timestamp", LocalDateTime.class))
-                .type(rs.getString("type"))
+                .eventId(rs.getLong("event_id"))
+                .entityId(rs.getLong("entity_id"))
+                .userId(rs.getLong("user_id"))
+                .timestamp(rs.getLong("event_timestamp"))
+                .eventType(rs.getString("type"))
                 .operation(rs.getString("operation"))
                 .build();
     }
