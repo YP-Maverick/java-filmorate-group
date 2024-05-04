@@ -15,6 +15,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 public class DirectorController {
+
+    // Директор
     private final DirectorService directorService;
 
     @PostMapping
