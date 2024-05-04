@@ -125,3 +125,4 @@ CREATE TABLE IF NOT EXISTS film_directors (
     CONSTRAINT pk_film_directors PRIMARY KEY(film_id, director_id)
 );
 
+
